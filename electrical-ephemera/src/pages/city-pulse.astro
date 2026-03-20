@@ -1,0 +1,19 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CaseDetail from '../components/CaseDetail.astro';
+import CityPulse from '../components/CityPulse.astro';
+import { getCaseById } from '../data/cases';
+
+const caseData = getCaseById('city-pulse');
+
+if (!caseData) {
+  throw new Error('Missing case data for city-pulse');
+}
+---
+
+<Layout title={`${caseData.title} — PRSM STUDIO`}>
+  <CaseDetail case={caseData}>
+    <CityPulse />
+  </CaseDetail>
+ </Layout>
+

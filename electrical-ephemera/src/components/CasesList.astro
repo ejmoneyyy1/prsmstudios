@@ -1,0 +1,86 @@
+---
+import { cases } from '../data/cases';
+---
+
+<section id="cases" class="relative z-20 py-20 overflow-hidden">
+  <div class="mx-auto w-full max-w-6xl px-6 md:px-12">
+    <div class="max-w-3xl">
+      <div class="overflow-hidden">
+        <h2
+          data-reveal="chars"
+          class="text-2xl md:text-3xl font-semibold tracking-tight text-[#F5F5F7]"
+        >
+          Grid List
+        </h2>
+      </div>
+      <p data-reveal="lines" class="mt-4 text-[#F5F5F7]/60 leading-relaxed">
+        Minimal titles. Maximum presence. Hover to reveal the work.
+      </p>
+    </div>
+
+    <div class="mt-14">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+        {cases.map((c) => (
+          <a
+            href={c.route}
+            class="group block"
+            data-case-item
+            data-case-id={c.id}
+            data-case-hover-img={c.hoverImage}
+            aria-label={`${c.indexLabel} ${c.title}`}
+          >
+            <div class="flex items-baseline justify-between gap-6">
+              <div class="flex items-baseline gap-6">
+                <div class="text-xs tracking-[0.35em] text-[#F5F5F7]/40 uppercase">
+                  {c.indexLabel}
+                </div>
+                <div class="text-2xl md:text-4xl font-semibold tracking-tight text-[#F5F5F7]">
+                  {c.title}
+                </div>
+              </div>
+
+              <div
+                data-case-view
+                class="text-xs tracking-[0.3em] text-[#F5F5F7]/30 uppercase transition-all duration-300 group-hover:opacity-100 opacity-70 group-hover:translate-x-1"
+              >
+                View
+              </div>
+            </div>
+
+            <div
+              class="mt-4 relative w-40 md:w-48 aspect-[4/3] overflow-hidden rounded-xl border border-white/10 bg-white/5"
+            >
+              <img
+                src={c.hoverImage}
+                alt=""
+                class="w-full h-full object-cover"
+                draggable="false"
+                data-case-thumb={c.id}
+              />
+            </div>
+
+            <div class="mt-6 h-px w-full bg-white/10" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- Global hover reveal layer -->
+  <div
+    data-case-hover-outer
+    class="fixed top-0 left-0 z-[100] pointer-events-none opacity-0"
+    aria-hidden="true"
+  >
+    <div class="absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2 w-[min(56vw,560px)] aspect-[4/3]">
+      <img
+        data-case-hover-img-el
+        class="w-full h-full object-cover rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md"
+        src=""
+        alt=""
+        draggable="false"
+      />
+    </div>
+  </div>
+</section>
+

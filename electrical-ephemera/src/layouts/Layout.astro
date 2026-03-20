@@ -1,0 +1,89 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import { ArrowRight, Navigation } from 'lucide-astro';
+import PrismBackground from '../components/PrismBackground.astro';
+import Splash from '../components/Splash.astro';
+
+import '../styles/global.css';
+const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      (() => {
+        const ua = navigator.userAgent;
+        const isSafari =
+          /Safari/i.test(ua) && !/Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS/i.test(ua);
+        if (!isSafari) return;
+        document.startViewTransition = undefined;
+        document.documentElement.setAttribute('data-browser', 'safari');
+      })();
+    </script>
+
+    <ViewTransitions />
+  </head>
+  <body>
+    <PrismBackground />
+    <Splash />
+    <div class="grain-layer grainy-noise" aria-hidden="true"></div>
+    <header class="fixed top-0 inset-x-0 z-50 pointer-events-none">
+      <div class="mx-auto w-full max-w-6xl px-6 md:px-12 h-20 relative">
+        <a
+          href="/"
+          class="pointer-events-auto absolute left-0 top-7 text-[#F5F5F7]/75 text-xs tracking-[0.22em] uppercase hover:text-[#F5F5F7] transition-colors"
+        >
+          About
+        </a>
+        <a
+          href="/brand-reframing"
+          class="pointer-events-auto absolute right-0 top-7 text-[#F5F5F7]/75 text-xs tracking-[0.22em] uppercase hover:text-[#F5F5F7] transition-colors"
+        >
+          Work
+        </a>
+
+        <div class="pointer-events-none absolute left-1/2 -translate-x-1/2 top-3 flex items-center gap-3">
+          <a
+            href="/"
+            class="pointer-events-auto flex items-center gap-2 text-[#F5F5F7] font-black tracking-[0.2em] uppercase text-xs"
+          >
+            <Navigation class="h-4 w-4" />
+            PRSM STUDIO
+          </a>
+          <a
+            href="/city-pulse"
+            data-magnetic
+            class="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-white/80 bg-white/85 backdrop-blur-xl px-5 py-2 text-black font-semibold shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all hover:bg-white"
+          >
+            <span>Get a Free Presence Audit</span>
+            <ArrowRight class="h-4 w-4" />
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Lenis moves only the content layer; header + Prism remain fixed -->
+    <div id="lenis-wrapper" class="relative z-20 h-screen overflow-hidden" data-smooth-wrapper>
+      <div id="lenis-content">
+        <div id="smooth-content">
+          <slot />
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/scripts/site.ts"></script>
+  </body>
+</html>
+

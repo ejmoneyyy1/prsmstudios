@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CaseDetail from '../components/CaseDetail.astro';
+import { getCaseById } from '../data/cases';
+
+const caseData = getCaseById('cloud-native-scale');
+
+if (!caseData) {
+  throw new Error('Missing case data for cloud-native-scale');
+}
+---
+
+<Layout title={`${caseData.title} — PRSM STUDIO`}>
+  <CaseDetail case={caseData}>
+    <section class="relative z-20 py-10">
+      <h2 data-reveal="chars" class="text-2xl md:text-3xl font-semibold tracking-tight text-[#F5F5F7]">
+        Approach
+      </h2>
+      <p class="mt-4 text-[#F5F5F7]/60 leading-relaxed max-w-3xl">
+        We design cloud-native presence: reliability, fast deploys, and cost-aware systems that scale without
+        breaking the experience.
+      </p>
+
+      <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 glass-surface">
+          <div class="text-xs tracking-[0.35em] text-[#F5F5F7]/40 uppercase font-semibold">Deliverables</div>
+          <ul class="mt-4 space-y-2 text-[#F5F5F7]/60 leading-relaxed">
+            <li>AWS-backed architecture roadmap</li>
+            <li>CI/CD + deployment strategy</li>
+            <li>Observability and performance budgets</li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 glass-surface">
+          <div class="text-xs tracking-[0.35em] text-[#F5F5F7]/40 uppercase font-semibold">Outcomes</div>
+          <ul class="mt-4 space-y-2 text-[#F5F5F7]/60 leading-relaxed">
+            <li>More uptime, fewer surprises</li>
+            <li>Faster iteration velocity</li>
+            <li>Lower cost per shipped change</li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md p-6 glass-surface">
+          <div class="text-xs tracking-[0.35em] text-[#F5F5F7]/40 uppercase font-semibold">Why It Works</div>
+          <ul class="mt-4 space-y-2 text-[#F5F5F7]/60 leading-relaxed">
+            <li>Resilience improves perception</li>
+            <li>Budgeting protects speed</li>
+            <li>Instrumentation prevents drift</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </CaseDetail>
+</Layout>
+

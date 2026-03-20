@@ -1,0 +1,64 @@
+---
+const stroke = '#F5F5F7';
+---
+
+<svg
+  data-heartbeat-svg
+  class="h-56 w-56 md:h-64 md:w-64 heartbeat-svg pointer-events-none animate-[heartbeatPulse_1.8s_ease-in-out_infinite]"
+  viewBox="0 0 200 200"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-label="Live heartbeat"
+>
+  <path
+    data-heartbeat-path
+    d="M15 112
+       C24 112, 28 96, 36 96
+       C45 96, 48 120, 57 120
+       C66 120, 68 86, 78 86
+       C90 86, 91 146, 103 146
+       C115 146, 116 100, 128 100
+       C139 100, 142 124, 153 124
+       C163 124, 168 108, 185 108"
+    stroke={stroke}
+    stroke-width="3.25"
+    stroke-linecap="round"
+    style="filter: drop-shadow(0 0 14px rgba(245, 245, 247, 0.65));"
+  />
+
+  <path
+    d="M15 112
+       C24 112, 28 96, 36 96
+       C45 96, 48 120, 57 120
+       C66 120, 68 86, 78 86
+       C90 86, 91 146, 103 146
+       C115 146, 116 100, 128 100
+       C139 100, 142 124, 153 124
+       C163 124, 168 108, 185 108"
+    stroke="rgba(245, 245, 247, 0.25)"
+    stroke-width="7"
+    stroke-linecap="round"
+    opacity="0.6"
+  />
+
+  <style>
+    @keyframes heartbeatPulse {
+      0%,
+      100% {
+        filter: drop-shadow(0 0 10px rgba(245, 245, 247, 0.35));
+        opacity: 0.95;
+        transform: scale(1);
+      }
+      50% {
+        filter: drop-shadow(0 0 22px rgba(245, 245, 247, 0.6));
+        opacity: 1;
+        transform: scale(1.02);
+      }
+    }
+
+    .heartbeat-svg {
+      transform-origin: center;
+    }
+  </style>
+</svg>
+

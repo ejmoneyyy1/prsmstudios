@@ -1,0 +1,19 @@
+0 verbose cli /Users/eaalo/.nvm/versions/node/v22.18.0/bin/node /Users/eaalo/.nvm/versions/node/v22.18.0/bin/npm
+1 info using npm@11.6.4
+2 info using node@v22.18.0
+3 silly config load:file:/Users/eaalo/.nvm/versions/node/v22.18.0/lib/node_modules/npm/npmrc
+4 warn Unknown env config "devdir". This will stop working in the next major version of npm.
+5 silly config load:file:/Users/eaalo/Downloads/Rebrand Site/.npmrc
+6 silly config load:file:/Users/eaalo/.npmrc
+7 silly config load:file:/Users/eaalo/.nvm/versions/node/v22.18.0/etc/npmrc
+8 verbose title npm config get registry
+9 verbose argv "config" "get" "registry"
+10 verbose logfile logs-max:10 dir:/Users/eaalo/Downloads/Rebrand Site/.npm-cache/_logs/2026-03-18T18_34_44_049Z-
+11 verbose logfile /Users/eaalo/Downloads/Rebrand Site/.npm-cache/_logs/2026-03-18T18_34_44_049Z-debug-0.log
+12 silly logfile done cleaning log files
+13 verbose cwd /Users/eaalo/Downloads/Rebrand Site
+14 verbose os Darwin 25.3.0
+15 verbose node v22.18.0
+16 verbose npm  v11.6.4
+17 verbose exit 0
+18 info ok

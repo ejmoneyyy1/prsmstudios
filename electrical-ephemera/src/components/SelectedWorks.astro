@@ -1,0 +1,42 @@
+---
+import { selectedWorks } from '../data/selectedWorks';
+---
+
+<section id="selected-works" class="relative z-20 pt-12 pb-28">
+  <div class="mx-auto w-full max-w-6xl px-6 md:px-12">
+    <div class="flex items-start justify-between gap-10">
+      <div class="max-w-xl">
+        <div class="text-xs tracking-[0.35em] text-[#F5F5F7]/40 uppercase">Selected Works</div>
+        <div class="overflow-hidden">
+          <h3
+            data-reveal="chars"
+            class="mt-3 text-xl md:text-2xl font-semibold tracking-tight text-[#F5F5F7]"
+          >
+            Text-only highlights
+          </h3>
+        </div>
+      </div>
+    </div>
+
+    <ul class="mt-10 space-y-4">
+      {selectedWorks.map((w) => (
+        <li>
+          <a
+            href={w.href}
+            class="group flex items-baseline justify-between gap-6"
+          >
+            <span class="text-[#F5F5F7]/80 group-hover:text-[#F5F5F7] transition-colors">
+              {w.title}
+            </span>
+            {w.meta ? (
+              <span class="text-xs tracking-[0.25em] text-[#F5F5F7]/30 uppercase">
+                {w.meta}
+              </span>
+            ) : null}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+

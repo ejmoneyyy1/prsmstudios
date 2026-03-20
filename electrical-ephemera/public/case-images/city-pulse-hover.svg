@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22d3ee" stop-opacity="0.95" />
+      <stop offset="0.55" stop-color="#60a5fa" stop-opacity="0.65" />
+      <stop offset="1" stop-color="#d946ef" stop-opacity="0.75" />
+    </linearGradient>
+    <radialGradient id="v" cx="50%" cy="45%" r="70%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#000000" stop-opacity="0.65" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#g)" />
+  <rect width="800" height="600" fill="url(#v)" />
+  <g opacity="0.9">
+    <path d="M80 430 C190 290, 300 510, 410 370 C520 230, 610 460, 720 310" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.35" />
+    <path d="M110 470 C220 330, 320 520, 430 410 C540 300, 630 480, 740 360" fill="none" stroke="#ffffff" stroke-width="3" stroke-opacity="0.22" />
+  </g>
+  <text x="50%" y="52%" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="44" fill="#ffffff" text-anchor="middle" font-weight="700">City Pulse</text>
+  <text x="50%" y="60%" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" font-size="16" fill="#ffffff" text-anchor="middle" opacity="0.75" letter-spacing="0.22em">HOVER REVEAL</text>
+</svg>
+
