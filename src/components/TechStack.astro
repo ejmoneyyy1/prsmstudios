@@ -1,4 +1,8 @@
-<section data-tech-stack class="mt-16 rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md p-6 glass-surface">
+<section
+  data-tech-stack
+  style="transform: translateZ(0)"
+  class="mt-16 rounded-3xl border border-white/10 bg-transparent backdrop-blur-md p-6 glass-surface"
+>
   <div class="overflow-hidden">
     <h3 data-reveal="chars" class="text-lg font-semibold tracking-tight text-[#F5F5F7]">
       Technical Stack
@@ -57,23 +61,22 @@
 
     <div class="lg:col-span-4">
       <div class="space-y-4 text-xs tracking-[0.26em] uppercase text-[#F5F5F7]/45">
-        <div class="overflow-hidden">
-          <div data-stack-label="client" class="translate-y-full">AWS</div>
+        <div class="overflow-hidden opacity-0" data-stack-label-mask="client">
+          <span data-stack-label="client" class="inline-block">AWS</span>
         </div>
-        <div class="overflow-hidden">
-          <div data-stack-label="apigateway" class="translate-y-full">AWS</div>
+        <div class="overflow-hidden opacity-0" data-stack-label-mask="apigateway">
+          <span data-stack-label="apigateway" class="inline-block">AWS</span>
         </div>
-        <div class="overflow-hidden">
-          <div data-stack-label="lambda" class="translate-y-full">AWS</div>
+        <div class="overflow-hidden opacity-0" data-stack-label-mask="lambda">
+          <span data-stack-label="lambda" class="inline-block">AWS</span>
         </div>
-        <div class="overflow-hidden">
-          <div data-stack-label="dynamodb" class="translate-y-full">AWS</div>
+        <div class="overflow-hidden opacity-0" data-stack-label-mask="dynamodb">
+          <span data-stack-label="dynamodb" class="inline-block">AWS</span>
         </div>
       </div>
 
       <p data-reveal="lines" class="mt-6 text-[#F5F5F7]/60 leading-relaxed">
-        Serverless scalability with AWS API Gateway, Lambda, and DynamoDB keeps CityPulse resilient
-        under traffic spikes while preserving low latency and efficient cloud cost.
+        Engineered for 99.99% availability using AWS Serverless primitives.
       </p>
     </div>
   </div>

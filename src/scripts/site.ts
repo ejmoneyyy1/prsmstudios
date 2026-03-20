@@ -888,6 +888,12 @@ function initTechStack() {
       el,
     ])
   );
+  const labelMasks = new Map(
+    Array.from(section.querySelectorAll<HTMLElement>('[data-stack-label-mask]')).map((el) => [
+      el.dataset.stackLabelMask ?? '',
+      el,
+    ])
+  );
   const labels = new Map(
     Array.from(section.querySelectorAll<HTMLElement>('[data-stack-label]')).map((el) => [
       el.dataset.stackLabel ?? '',
@@ -903,22 +909,40 @@ function initTechStack() {
   });
 
   gsap.set(ping, { opacity: 0 });
-  labels.forEach((label) => gsap.set(label, { yPercent: 105 }));
+  labelMasks.forEach((mask) => gsap.set(mask, { opacity: 0 }));
 
   const pulseNode = (nodeId: string) => {
     const glow = nodeGlow.get(nodeId);
-    const label = labels.get(nodeId);
+    const labelMask = labelMasks.get(nodeId);
+    const labelEl = labels.get(nodeId);
     if (glow) {
       gsap.fromTo(
         glow,
         { opacity: 0, scale: 1 },
-        { opacity: 1, scale: 1.02, duration: 0.24, yoyo: true, repeat: 1, ease: 'power2.out' }
+        { opacity: 1, scale: 1.05, duration: 0.22, yoyo: true, repeat: 1, ease: 'power2.out' }
       );
     }
-    if (label && label.dataset.stackLabelShown !== 'true') {
-      label.dataset.stackLabelShown = 'true';
-      gsap.to(label, { yPercent: 0, duration: 0.75, ease: 'expo.out' });
-    }
+    if (!labelMask || !labelEl) return;
+    if (labelMask.dataset.awsLabelShown === 'true') return;
+    labelMask.dataset.awsLabelShown = 'true';
+    gsap.to(labelMask, { opacity: 1, duration: 0.2, ease: 'power2.out', overwrite: true });
+
+    const split = SplitText.create(labelEl, {
+      type: 'chars',
+      charsClass: 'split-char',
+    } as any);
+    const chars = (split as any).chars as HTMLElement[] | undefined;
+    if (!chars?.length) return;
+
+    gsap.from(chars, {
+      yPercent: -120,
+      scale: 1.2,
+      opacity: 1,
+      duration: 1.0,
+      ease: 'expo.out',
+      stagger: 0.01,
+      overwrite: 'auto',
+    });
   };
 
   const drawTimeline = gsap.timeline({

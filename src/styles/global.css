@@ -80,7 +80,7 @@ html[data-browser='safari'] {
   --bg-brightness: 1.25;
   --bg-contrast: 1.15;
   /* Compositor isolation: over-drive WebKit backdrop saturation (desaturation bug). */
-  --webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.2);
+  --webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
   --glass-saturate: 180%;
   --glass-brightness: 1.1;
 }
