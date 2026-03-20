@@ -1,5 +1,5 @@
 ---
-const prismSceneScriptUrl = new URL('../scripts/prismScene.ts', import.meta.url).href;
+import prismSceneScriptUrl from '../scripts/prismScene.ts?url';
 ---
 
 <div class="relative w-full h-[48vh] min-h-[360px] max-h-[560px]" data-prism-wrap>
@@ -141,5 +141,5 @@ const prismSceneScriptUrl = new URL('../scripts/prismScene.ts', import.meta.url)
   );
 </script>
 
-<script type="module" src={prismSceneScriptUrl}></script>
+<script type="module" src={prismSceneScriptUrl} defer></script>
 

@@ -1,5 +1,5 @@
 ---
-const prismBackgroundScriptUrl = new URL('../scripts/prismBackground.ts', import.meta.url).href;
+import prismBackgroundScriptUrl from '../scripts/prismBackground.ts?url';
 ---
 
 <div data-prism-bg class="fixed inset-0 z-[1] pointer-events-none">
@@ -177,5 +177,5 @@ const prismBackgroundScriptUrl = new URL('../scripts/prismBackground.ts', import
   );
 </script>
 
-<script type="module" src={prismBackgroundScriptUrl}></script>
+<script type="module" src={prismBackgroundScriptUrl} defer></script>
 

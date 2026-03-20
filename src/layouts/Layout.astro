@@ -6,8 +6,7 @@ import Splash from '../components/Splash.astro';
 
 import '../styles/global.css';
 const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
-
-const siteScriptUrl = new URL('../scripts/site.ts', import.meta.url).href;
+import siteScriptUrl from '../scripts/site.ts?url';
 ---
 
 <!doctype html>
@@ -85,7 +84,7 @@ const siteScriptUrl = new URL('../scripts/site.ts', import.meta.url).href;
       </div>
     </div>
 
-    <script type="module" src={siteScriptUrl}></script>
+    <script type="module" src={siteScriptUrl} defer></script>
   </body>
 </html>
 
