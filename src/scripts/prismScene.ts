@@ -101,8 +101,10 @@ function initPrismScenes() {
     window.addEventListener('mousemove', onMove, { passive: true });
 
     const resize = () => {
-      const w = wrap.clientWidth;
-      const h = wrap.clientHeight;
+      const innerW: number = window.innerWidth;
+      const innerH: number = window.innerHeight;
+      const w: number = wrap.clientWidth || innerW;
+      const h: number = wrap.clientHeight || innerH;
       renderer.setSize(w, h);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -155,7 +157,7 @@ function initPrismScenes() {
         prismGeo.dispose();
         prismMat.dispose();
         gradientGeo.dispose();
-          timer.dispose();
+        timer.dispose();
       },
       { once: true }
     );

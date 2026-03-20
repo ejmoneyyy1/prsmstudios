@@ -5,6 +5,7 @@ import PrismBackground from '../components/PrismBackground.astro';
 import Splash from '../components/Splash.astro';
 
 import '../styles/global.css';
+import { OG_IMAGE, SITE_URL } from '../consts';
 const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
 
 ---
@@ -17,6 +18,9 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
     <meta name="color-scheme" content="light" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <meta property="og:site_name" content="PRSM STUDIO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:image" content={`${SITE_URL}${OG_IMAGE}`} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -91,7 +95,7 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
 
     <!-- Import client script (Astro processes/bundles TS). -->
     <script>
-      import '../scripts/site.ts';
+      import '@scripts/site.ts';
     </script>
   </body>
 </html>
