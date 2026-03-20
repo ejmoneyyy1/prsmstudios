@@ -80,6 +80,14 @@ function initLenis() {
   const wrapperEl = document.getElementById('lenis-wrapper') as HTMLElement | null;
   const contentEl = document.getElementById('lenis-content') as HTMLElement | null;
 
+  // Mobile optimization:
+  // Lenis can cause viewport clipping / odd scroll behavior on iOS & small screens.
+  // Prefer native scrolling on coarse-pointer devices and <=768px widths.
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const smallScreen = window.matchMedia('(max-width: 768px)').matches;
+  if (prefersReducedMotion || coarsePointer || smallScreen) return;
+
   // Don't let Lenis block the site (e.g. if chunks time out).
   import('lenis')
     .then((mod) => {

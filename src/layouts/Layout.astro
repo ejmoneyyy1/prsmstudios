@@ -76,7 +76,12 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
     </header>
 
     <!-- Lenis moves only the content layer; header + Prism remain fixed -->
-    <div id="lenis-wrapper" class="relative z-20 h-screen overflow-hidden" data-smooth-wrapper>
+    <!-- Use dvh to avoid mobile iOS address-bar viewport glitches -->
+    <div
+      id="lenis-wrapper"
+      class="relative z-20 h-[100dvh] overflow-hidden"
+      data-smooth-wrapper
+    >
       <div id="lenis-content">
         <div id="smooth-content">
           <slot />

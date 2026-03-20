@@ -134,6 +134,19 @@ html[data-browser='safari'] .trust-bar-card {
   opacity: 0.18;
 }
 
+/* Mobile: let the document flow normally (avoid clipping from 100vh/overflow-hidden). */
+@media (max-width: 768px) {
+  #lenis-wrapper {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* If Lenis isn't initialized on mobile, remove any transform remnants. */
+  #lenis-content {
+    transform: none !important;
+  }
+}
+
 /* Reduced motion: disable heavy transforms/animations */
 @media (prefers-reduced-motion: reduce) {
   * {
