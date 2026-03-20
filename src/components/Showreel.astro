@@ -9,7 +9,7 @@ import { selectedWorks } from '../data/selectedWorks';
         <div class="overflow-hidden">
           <div
             data-reveal="chars"
-            class="text-xs tracking-[0.35em] text-[#F5F5F7]/40 uppercase"
+            class="text-xs tracking-[0.35em] text-[#0D0D0D]/40 uppercase"
           >
             Showreel
           </div>
@@ -21,19 +21,19 @@ import { selectedWorks } from '../data/selectedWorks';
       {selectedWorks.map((w) => (
         <a
           href={w.href}
-          class="group block pt-6 border-t border-white/10"
+          class="group block pt-6 border-t border-black/10"
         >
-          <div class="text-2xl md:text-3xl font-semibold tracking-tight text-[#F5F5F7]">
+          <div class="text-2xl md:text-3xl font-semibold tracking-tight text-[#0D0D0D]">
             {w.title}
           </div>
           {w.meta ? (
-            <div class="mt-4 text-xs tracking-[0.25em] text-[#F5F5F7]/30 uppercase">
+            <div class="mt-4 text-xs tracking-[0.25em] text-[#0D0D0D]/30 uppercase">
               {w.meta}
             </div>
           ) : null}
-          <div class="mt-5 h-px w-full bg-white/10 group-hover:bg-white/20 transition-colors" />
+          <div class="mt-5 h-px w-full bg-black/10 group-hover:bg-black/20 transition-colors" />
           <div
-            class="mt-4 text-xs tracking-[0.3em] text-[#F5F5F7]/30 uppercase transition-all group-hover:text-[#F5F5F7] group-hover:translate-x-1"
+            class="mt-4 text-xs tracking-[0.3em] text-[#0D0D0D]/30 uppercase transition-all group-hover:text-[#0D0D0D] group-hover:translate-x-1"
           >
             View
           </div>

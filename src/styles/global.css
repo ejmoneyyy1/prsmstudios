@@ -10,23 +10,23 @@ body {
 body {
   -webkit-font-smoothing: antialiased;
   image-rendering: -webkit-optimize-contrast;
-  background-color: #0d0d0d;
-  color: #f5f5f7;
+  background-color: #f7f7f7;
+  color: #0d0d0d;
   overflow-x: hidden;
   font-family: 'Inter', sans-serif;
   background-image:
     radial-gradient(
       900px circle at 15% -10%,
-      rgba(59, 130, 246, 0.22),
+      rgba(59, 130, 246, 0.14),
       transparent 55%
     ),
     radial-gradient(
       700px circle at 85% 15%,
-      rgba(0, 210, 255, 0.12),
+      rgba(0, 210, 255, 0.10),
       transparent 52%
     ),
-    radial-gradient(600px circle at 40% 100%, rgba(46, 107, 255, 0.09), transparent 55%),
-    linear-gradient(180deg, rgba(13, 13, 13, 0.4) 0%, #0d0d0d 45%, #050505 100%);
+    radial-gradient(600px circle at 40% 100%, rgba(46, 107, 255, 0.08), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, #f7f7f7 45%, #ffffff 100%);
   background-attachment: fixed;
   transform-style: preserve-3d;
 }
@@ -58,7 +58,7 @@ html[data-browser='safari'] [data-smooth-wrapper] {
 }
 
 .prism-preview-card {
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(0, 0, 0, 0.05);
   isolation: isolate;
   -webkit-font-smoothing: antialiased;
   backface-visibility: hidden;
@@ -130,7 +130,8 @@ html[data-browser='safari'] .trust-bar-card {
   pointer-events: none;
   z-index: 9999;
   background-repeat: repeat;
-  mix-blend-mode: overlay;
+  mix-blend-mode: multiply;
+  opacity: 0.18;
 }
 
 /* Reduced motion: disable heavy transforms/animations */
