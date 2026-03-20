@@ -1,3 +1,7 @@
+---
+const prismSceneScriptUrl = new URL('../scripts/prismScene.ts', import.meta.url).href;
+---
+
 <div class="relative w-full h-[48vh] min-h-[360px] max-h-[560px]" data-prism-wrap>
   <canvas data-prism-canvas class="w-full h-full block"></canvas>
 </div>
@@ -137,5 +141,5 @@
   );
 </script>
 
-<script type="module" src="/src/scripts/prismScene.ts"></script>
+<script type="module" src={prismSceneScriptUrl}></script>
 

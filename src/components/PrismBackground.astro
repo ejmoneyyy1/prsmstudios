@@ -1,3 +1,7 @@
+---
+const prismBackgroundScriptUrl = new URL('../scripts/prismBackground.ts', import.meta.url).href;
+---
+
 <div data-prism-bg class="fixed inset-0 z-[1] pointer-events-none">
   <canvas data-prism-canvas class="w-full h-full block"></canvas>
 </div>
@@ -173,5 +177,5 @@
   );
 </script>
 
-<script type="module" src="/src/scripts/prismBackground.ts"></script>
+<script type="module" src={prismBackgroundScriptUrl}></script>
 

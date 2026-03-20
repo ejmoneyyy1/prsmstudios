@@ -36,6 +36,7 @@ declare global {
     __prsmCasesHoverMoveBound?: boolean;
     __prsmFlipGhost?: HTMLElement | null;
     __prsmTechStackPingTimer?: number;
+    __prsmSplashFailSafeDone?: boolean;
   }
 }
 
@@ -1096,6 +1097,30 @@ if (typeof window !== 'undefined') {
       const node = document.getElementById('smooth-content');
       if (node) gsap.set(node, { opacity: 1 });
     }, 800);
+
+    // Loader fail-safe: if JS stalls and the splash never completes,
+    // forcibly reveal content after a short grace period.
+    const runLoaderFailSafe = () => {
+      if (window.__prsmSplashFailSafeDone) return;
+      // If splash completed normally, do nothing.
+      if (window.__prsmSplashDone) return;
+
+      const splash = document.querySelector<HTMLElement>('[data-splash]');
+      const smoothNode = document.getElementById('smooth-content');
+
+      if (smoothNode) gsap.to(smoothNode, { opacity: 1, duration: 0.5, ease: 'power2.out', overwrite: true });
+      if (splash) {
+        gsap.set(splash, { opacity: 0, pointerEvents: 'none', overwrite: true });
+        splash.remove();
+      }
+      window.__prsmSplashFailSafeDone = true;
+      console.log('PRSM Studio: Loader fail-safe applied');
+    };
+
+    window.addEventListener('load', runLoaderFailSafe, { once: true });
+    window.setTimeout(runLoaderFailSafe, 5000);
+
+    console.log('PRSM Studio: Engine Initialized');
   };
 
   if (document.readyState === 'loading') {
