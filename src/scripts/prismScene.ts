@@ -120,10 +120,12 @@ function initPrismScenes() {
     io.observe(wrap);
 
     let loadedSignaled = false;
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
+    timer.connect(document);
     const tick = () => {
       if (running) {
-        const t = clock.getElapsedTime();
+        timer.update();
+        const t = timer.getElapsed();
         prism.rotation.x += (target.x - prism.rotation.x) * 0.06;
         prism.rotation.y += (target.y - prism.rotation.y) * 0.06;
         prism.rotation.z = 0.12 + Math.sin(t * 0.55) * 0.025;
@@ -153,6 +155,7 @@ function initPrismScenes() {
         prismGeo.dispose();
         prismMat.dispose();
         gradientGeo.dispose();
+          timer.dispose();
       },
       { once: true }
     );

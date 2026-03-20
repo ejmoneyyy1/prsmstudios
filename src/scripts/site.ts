@@ -37,6 +37,7 @@ declare global {
     __prsmFlipGhost?: HTMLElement | null;
     __prsmTechStackPingTimer?: number;
     __prsmSplashFailSafeDone?: boolean;
+    __prsmEngineStarted?: boolean;
   }
 }
 
@@ -1087,6 +1088,8 @@ if (typeof window !== 'undefined') {
   disableNativeViewTransitionsForSafari();
 
   const start = () => {
+    if (window.__prsmEngineStarted) return;
+    window.__prsmEngineStarted = true;
     cleanupGsap();
     initAll();
 
@@ -1128,6 +1131,9 @@ if (typeof window !== 'undefined') {
   } else {
     start();
   }
+
+  // Astro route/view-transition lifecycle: ensure GSAP is initialized on navigation too.
+  document.addEventListener('astro:page-load', start);
 
   document.addEventListener('astro:before-swap', () => {
     liftPrismCanvasBeforeSwap();

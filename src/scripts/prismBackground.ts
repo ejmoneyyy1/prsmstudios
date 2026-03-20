@@ -127,7 +127,8 @@ function initPrismBackground() {
   // Rotation velocity for a heavy, physical spring response.
   let rotVelX = 0;
   let rotVelY = 0;
-  const clock = new THREE.Clock();
+  const timer = new THREE.Timer();
+  timer.connect(document);
   let running = true;
 
   const io = new IntersectionObserver(
@@ -141,7 +142,8 @@ function initPrismBackground() {
   let signaled = false;
   const render = () => {
     if (running) {
-      const t = clock.getElapsedTime();
+      timer.update();
+      const t = timer.getElapsed();
       // Lerp pointer target into an inertial pointer for heavy response.
       pointer.x += (pointerTarget.x - pointer.x) * 0.08;
       pointer.y += (pointerTarget.y - pointer.y) * 0.08;
@@ -212,6 +214,7 @@ function initPrismBackground() {
       prismGeo.dispose();
       prismMat.dispose();
       renderer.dispose();
+      timer.dispose();
     },
     { once: true }
   );
