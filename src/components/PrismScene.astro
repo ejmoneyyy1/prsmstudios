@@ -1,5 +1,5 @@
 ---
-import prismSceneScriptUrl from '../scripts/prismScene.ts?url';
+---
 ---
 
 <div class="relative w-full h-[48vh] min-h-[360px] max-h-[560px]" data-prism-wrap>
@@ -141,5 +141,8 @@ import prismSceneScriptUrl from '../scripts/prismScene.ts?url';
   );
 </script>
 
-<script type="module" src={prismSceneScriptUrl} defer></script>
+<!-- Import client script (Astro processes/bundles TS). -->
+<script>
+  import '../scripts/prismScene.ts';
+</script>
 

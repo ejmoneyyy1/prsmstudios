@@ -1,5 +1,5 @@
 ---
-import prismBackgroundScriptUrl from '../scripts/prismBackground.ts?url';
+---
 ---
 
 <div data-prism-bg class="fixed inset-0 z-[1] pointer-events-none">
@@ -177,5 +177,8 @@ import prismBackgroundScriptUrl from '../scripts/prismBackground.ts?url';
   );
 </script>
 
-<script type="module" src={prismBackgroundScriptUrl} defer></script>
+<!-- Import client script (Astro processes/bundles TS). -->
+<script>
+  import '../scripts/prismBackground.ts';
+</script>
 

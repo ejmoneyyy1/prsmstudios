@@ -6,7 +6,7 @@ import Splash from '../components/Splash.astro';
 
 import '../styles/global.css';
 const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
-import siteScriptUrl from '../scripts/site.ts?url';
+
 ---
 
 <!doctype html>
@@ -84,7 +84,10 @@ import siteScriptUrl from '../scripts/site.ts?url';
       </div>
     </div>
 
-    <script type="module" src={siteScriptUrl} defer></script>
+    <!-- Import client script (Astro processes/bundles TS). -->
+    <script>
+      import '../scripts/site.ts';
+    </script>
   </body>
 </html>
 
