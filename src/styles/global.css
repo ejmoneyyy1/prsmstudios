@@ -73,6 +73,13 @@ body {
   transform-style: preserve-3d;
 }
 
+/* iOS / mobile: fixed backgrounds cost a lot and jitter with the URL bar */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
 #smooth-content,
 main {
   transform: translateZ(0);
@@ -625,6 +632,15 @@ section[data-hero-section].hero-perspective-hub {
   z-index: 2;
   transform-style: preserve-3d;
   -webkit-transform-style: preserve-3d;
+  /* Mobile: avoid 100vh jump when iOS URL bar shows/hides; dvh when supported */
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+@supports (min-height: 100dvh) {
+  .hero-newspaper-grid {
+    min-height: 100dvh;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -684,10 +700,12 @@ section[data-hero-section] .hero-newspaper-headline {
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
+  overflow-wrap: break-word;
   transform: translateZ(200px) rotateZ(0.001deg);
   -webkit-transform: translateZ(200px) rotateZ(0.001deg);
   font-family: var(--font-display) !important;
-  font-size: clamp(4rem, 8vw, 10rem) !important;
+  /* Slightly smaller floor on phones; fluid up to desktop */
+  font-size: clamp(2.75rem, 11vw + 0.25rem, 10rem) !important;
   font-weight: 900 !important;
   line-height: 0.85 !important;
   letter-spacing: -0.06em !important;
@@ -715,6 +733,19 @@ section[data-hero-section] .hero-newspaper-headline .split-line {
   font-weight: 500;
   letter-spacing: -0.02em;
   color: rgba(0, 0, 0, 0.72);
+}
+
+@media (max-width: 640px) {
+  .hero-newspaper-mission {
+    font-size: 1.125rem;
+    line-height: 1.5;
+    margin-top: 1.5rem;
+  }
+
+  .hero-newspaper-label {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+  }
 }
 
 /* Service pill — frosted glass + 1px border (Safari: -webkit-backdrop-filter) */
