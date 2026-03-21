@@ -2,33 +2,102 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-primary: #fafafa;
+  --text-primary: #1a1b1e;
+  /* High-end grotesque for headings (loaded in Layout.astro) */
+  --font-display: 'Inter Tight', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  /* Headings: display grotesque site-wide */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+  }
+}
+
+/* Hero headline: allow rotated char cells (GSAP) without clipping */
+.hero-headline .split-char {
+  overflow: visible;
+}
+
+/* Legacy hero class — newspaper stack uses .hero-newspaper-headline */
+.hero-headline-news {
+  padding: 0;
+  border: none;
+  max-width: 100%;
+  width: 100%;
+}
+
 html,
 body {
   height: 100%;
+  text-rendering: optimizeLegibility;
 }
 
+/* GPU compositing: Safari avoids layer clipping / flattening with explicit 3D layers */
 body {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
   -webkit-font-smoothing: antialiased;
   image-rendering: -webkit-optimize-contrast;
-  background-color: #f7f7f7;
-  color: #0d0d0d;
+  /* Matte editorial canvas — grain + glass */
+  background-color: #fafafa;
+  color: var(--text-primary);
+  line-height: 1.6;
   overflow-x: hidden;
+  /* Native momentum scrolling on iOS; avoid accidental horizontal pan blocking vertical scroll */
+  touch-action: pan-y;
   font-family: 'Inter', sans-serif;
   background-image:
     radial-gradient(
       900px circle at 15% -10%,
-      rgba(59, 130, 246, 0.14),
+      rgba(59, 130, 246, 0.06),
       transparent 55%
     ),
     radial-gradient(
       700px circle at 85% 15%,
-      rgba(0, 210, 255, 0.10),
+      rgba(0, 210, 255, 0.04),
       transparent 52%
     ),
-    radial-gradient(600px circle at 40% 100%, rgba(46, 107, 255, 0.08), transparent 55%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, #f7f7f7 45%, #ffffff 100%);
+    radial-gradient(600px circle at 40% 100%, rgba(46, 107, 255, 0.04), transparent 55%),
+    linear-gradient(180deg, rgba(252, 252, 252, 0.98) 0%, #fafafa 45%, #fafafa 100%);
   background-attachment: fixed;
   transform-style: preserve-3d;
+}
+
+#smooth-content,
+main {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+  /* Anti-aliasing lock: sharpen perceived edges on large display type + UI */
+  image-rendering: -webkit-optimize-contrast;
+}
+
+main > section {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* All canvases: sharp pixels + GPU layer (Safari-friendly) */
+canvas {
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+}
+
+[data-prism-canvas] {
+  will-change: transform;
 }
 
 .split-line,
@@ -46,6 +115,9 @@ body {
 
 [data-smooth-wrapper] {
   transform-style: preserve-3d;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
 }
 
 html[data-browser='safari'] [data-smooth-wrapper] {
@@ -58,9 +130,271 @@ html[data-browser='safari'] [data-smooth-wrapper] {
 }
 
 .prism-preview-card {
-  background-color: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.02), 0 30px 60px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
   isolation: isolate;
   -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+  transform: translateZ(0) rotateZ(0.001deg);
+  -webkit-transform: translateZ(0) rotateZ(0.001deg);
+}
+
+/* Hero Prism vault — Spitzer-level glass (WebKit saturation + brightness) */
+[data-prism-glass-vault].prism-preview-card,
+.prism-preview-card.prism-vault-glass {
+  -webkit-backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+  backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+}
+
+/* Double-tap fullscreen target (Hero prism) — mobile gesture */
+[data-prism-glass-vault] {
+  touch-action: manipulation;
+}
+
+.prism-vault-expand-hint {
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  opacity: 0.4;
+  color: #0d0d0d;
+}
+
+.prism-vault-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: #000;
+  pointer-events: auto;
+}
+
+/* Fullscreen crystal — dark blur behind expanded prism */
+.prism-vault-overlay--crystal {
+  background: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(32px) saturate(120%);
+  -webkit-backdrop-filter: blur(32px) saturate(120%);
+}
+
+/* Elite soft cursor (GSAP lerp) */
+html.prsm-elite-cursor-root {
+  cursor: none;
+}
+
+html.prsm-elite-cursor-root a,
+html.prsm-elite-cursor-root button,
+html.prsm-elite-cursor-root [role='button'] {
+  cursor: none;
+}
+
+.prsm-elite-cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 10002;
+  opacity: 0;
+  will-change: transform;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.prsm-elite-cursor-root {
+    cursor: auto;
+  }
+
+  html.prsm-elite-cursor-root a,
+  html.prsm-elite-cursor-root button,
+  html.prsm-elite-cursor-root [role='button'] {
+    cursor: pointer;
+  }
+
+  .prsm-elite-cursor {
+    display: none !important;
+  }
+}
+
+/* Global film grain: see Grain.astro (feTurbulence @ 3% opacity, fixed full-viewport) */
+
+/* Venture 01 — device frame */
+.venture-device-wrap {
+  min-height: 320px;
+}
+
+.venture-device-perspective {
+  perspective: 1600px;
+  perspective-origin: 50% 40%;
+}
+
+.venture-iphone {
+  position: relative;
+  width: min(300px, 82vw);
+  max-height: min(640px, 70vh);
+  aspect-ratio: 390 / 844;
+  border-radius: 2.75rem;
+  padding: 0.55rem;
+  background: linear-gradient(155deg, #2a2a2e 0%, #0c0c0e 55%, #1a1b20 100%);
+  box-shadow:
+    0 50px 120px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: rotateY(-14deg) rotateX(5deg);
+  transform-style: preserve-3d;
+}
+
+.venture-iphone-notch {
+  position: absolute;
+  top: 0.55rem;
+  left: 50%;
+  z-index: 2;
+  height: 1.5rem;
+  width: 32%;
+  transform: translateX(-50%);
+  border-radius: 0 0 0.75rem 0.75rem;
+  background: #0a0a0c;
+}
+
+.venture-iphone-screen {
+  position: absolute;
+  inset: 0.55rem;
+  overflow: hidden;
+  border-radius: 2.2rem;
+  background: #000;
+}
+
+.venture-iphone-video,
+.venture-iphone-fallback {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 1023px) {
+  .venture-iphone {
+    transform: rotateY(-6deg) rotateX(2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .venture-iphone {
+    transform: none;
+  }
+}
+
+.prism-vault-close-hint {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  z-index: 230;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 10, 12, 0.65);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.prism-vault-close-hint:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Hero — industrial “lab” prism panel (not flat white) */
+.prism-preview-lab {
+  background:
+    linear-gradient(155deg, rgba(18, 20, 28, 0.97) 0%, rgba(12, 14, 20, 0.98) 45%, rgba(22, 24, 32, 0.95) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 20px 50px rgba(0, 0, 0, 0.28),
+    0 2px 0 rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+  transform: rotateZ(0.001deg);
+}
+
+.prism-preview-pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.25rem 0.6rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.prism-preview-stage {
+  cursor: zoom-in;
+  touch-action: manipulation;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.prism-preview-stage:focus-visible {
+  box-shadow: 0 0 0 2px var(--bg-primary), 0 0 0 4px rgba(34, 211, 238, 0.45);
+}
+
+/* Native dialog — full prism lab */
+.prism-preview-dialog {
+  max-width: min(96vw, 960px);
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+}
+
+.prism-preview-dialog::backdrop {
+  background: rgba(6, 8, 12, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.prism-preview-dialog__panel {
+  overflow: hidden;
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(16, 18, 26, 0.98) 0%, rgba(10, 11, 16, 0.99) 100%);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.4),
+    0 40px 100px rgba(0, 0, 0, 0.55);
+}
+
+@media (max-width: 640px) {
+  .prism-preview-dialog {
+    max-width: 100vw;
+    margin: auto;
+  }
+
+  .prism-preview-dialog__panel {
+    border-radius: 1rem;
+  }
+}
+
+.trust-bar-card {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.02), 0 30px 60px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  isolation: isolate;
   backface-visibility: hidden;
   transform: rotateZ(0.001deg);
 }
@@ -79,8 +413,8 @@ html[data-browser='safari'] [data-prism-wrap] [data-prism-canvas] {
 html[data-browser='safari'] {
   --bg-brightness: 1.25;
   --bg-contrast: 1.15;
-  /* Compositor isolation: over-drive WebKit backdrop saturation (desaturation bug). */
-  --webkit-backdrop-filter: blur(20px) saturate(180%) brightness(1.1);
+  /* Spitzer-level: compensate Safari’s dull backdrop / glass compositing */
+  --webkit-backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
   --glass-saturate: 180%;
   --glass-brightness: 1.1;
 }
@@ -93,12 +427,20 @@ html[data-browser='safari'] [data-hero-section] img {
     brightness(var(--bg-brightness));
 }
 
-html[data-browser='safari'] a[data-magnetic] {
+html[data-browser='safari'] a[data-magnetic],
+html[data-browser='safari'] a.presence-audit-btn {
   box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
 }
 
-html[data-browser='safari'] .prism-preview-card,
-html[data-browser='safari'] .trust-bar-card {
+html[data-browser='safari'] [data-prism-glass-vault].prism-preview-card {
+  -webkit-backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+  backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+}
+
+html[data-browser='safari'] .prism-preview-card:not([data-prism-glass-vault]),
+html[data-browser='safari'] .prism-preview-lab,
+html[data-browser='safari'] .trust-bar-card,
+html[data-browser='safari'] .core-services-card {
   -webkit-backdrop-filter: var(--webkit-backdrop-filter);
   backdrop-filter: var(--webkit-backdrop-filter);
   -webkit-font-smoothing: antialiased;
@@ -115,35 +457,119 @@ html[data-browser='safari'] .safari-depth-lock {
   transform: translateZ(1px) rotateZ(0.001deg);
 }
 
-html[data-browser='safari'] .prism-preview-card {
+html[data-browser='safari'] .prism-preview-card:not([data-prism-glass-vault]),
+html[data-browser='safari'] .prism-preview-lab {
   transform: translateZ(1px) rotateZ(0.001deg);
 }
 
-html[data-browser='safari'] .trust-bar-card {
-  transform: translateZ(1px) rotateZ(0.001deg);
+/* Hero vault — mid-Z between panes (-500) and headline (+200) */
+html[data-browser='safari'] section[data-hero-section] [data-prism-glass-vault].prism-preview-card {
+  transform: translateZ(120px) rotateZ(0.001deg);
+  -webkit-transform: translateZ(120px) rotateZ(0.001deg);
 }
 
-/* Premium grain overlay */
-.grain-layer {
+html[data-browser='safari'] .trust-bar-card,
+html[data-browser='safari'] .core-services-card {
+  transform: translateZ(1px) rotateZ(0.001deg);
+  -webkit-transform: translateZ(1px) rotateZ(0.001deg);
+}
+
+html[data-browser='safari'] a.core-services-cta {
+  -webkit-backdrop-filter: var(--webkit-backdrop-filter);
+  backdrop-filter: var(--webkit-backdrop-filter);
+  transform: translateZ(1px) rotateZ(0.001deg);
+  -webkit-transform: translateZ(1px) rotateZ(0.001deg);
+  -webkit-font-smoothing: antialiased;
+  backface-visibility: hidden;
+}
+
+/* Store badges — scale-up hover (Featured venture) */
+.store-badge {
+  display: inline-block;
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  transform-origin: center center;
+  will-change: transform;
+}
+.store-badge.store-badge-pill {
+  display: inline-flex;
+}
+.store-badge:hover,
+.store-badge:focus-visible {
+  transform: scale(1.06);
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-badge {
+    transition: none;
+  }
+  .store-badge:hover,
+  .store-badge:focus-visible {
+    transform: none;
+  }
+}
+
+/* Spitzer grain — fixed full viewport, feTurbulence @ 3% (Grain.astro) */
+.grain-agency,
+.grain-overlay {
   position: fixed;
-  inset: -40px;
-  pointer-events: none;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100%;
   z-index: 9999;
-  background-repeat: repeat;
+  pointer-events: none;
+  opacity: 1;
   mix-blend-mode: multiply;
-  opacity: 0.18;
 }
 
-/* Mobile: let the document flow normally (avoid clipping from 100vh/overflow-hidden). */
-@media (max-width: 768px) {
+.grain-agency .grain-agency__svg rect,
+.grain-overlay .grain-agency__svg rect {
+  opacity: 0.03;
+}
+
+.grain-agency__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Presence audit portal — Cal embed lives inside prism glass */
+.prism-portal-card {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 24px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.65) inset,
+    0 18px 48px rgba(0, 0, 0, 0.06);
+}
+
+/* Onyx aesthetic for third-party Cal UI; full color on hover */
+.audit-page .audit-cal-iframe {
+  filter: grayscale(1) contrast(1.1);
+  transition: filter 0.5s ease;
+}
+
+.audit-page .audit-cal-iframe:hover {
+  filter: none;
+}
+
+/* Tablet / half-window / mobile: full-page document scroll (pairs with native scroll in site.ts). */
+@media (max-width: 1024px) {
   #lenis-wrapper {
-    height: auto;
-    overflow: visible;
+    height: auto !important;
+    min-height: 100dvh;
+    overflow: visible !important;
+    overflow-x: hidden;
   }
 
-  /* If Lenis isn't initialized on mobile, remove any transform remnants. */
   #lenis-content {
     transform: none !important;
+  }
+
+  #smooth-content {
+    min-height: min-content;
   }
 }
 
@@ -157,3 +583,261 @@ html[data-browser='safari'] .trust-bar-card {
   }
 }
 
+/* —— Newspaper stack hero — Perspective-Focus hub (Safari kill-switch) —— */
+section[data-hero-section].hero-display-section,
+section[data-hero-section].hero-perspective-hub {
+  /* No isolation: isolate — it flattens 3D; perspective needs a single compositor scene */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-font-smoothing: antialiased;
+  perspective: 1000px;
+  -webkit-perspective: 1000px;
+  perspective-origin: 50% 50%;
+  -webkit-perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Colorful beam / fan layers — deep -Z + scale so they still fill the viewport */
+.hero-prsm-fx-layer.hero-prsm-fx-pane-depth,
+.hero-prsm-fx-pane-depth {
+  position: absolute;
+  z-index: 1;
+  transform: translateZ(-500px) scale(1.5);
+  -webkit-transform: translateZ(-500px) scale(1.5);
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  transform-origin: center center;
+  -webkit-transform-origin: center center;
+  will-change: transform;
+}
+
+.hero-newspaper-shell {
+  position: relative;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.hero-newspaper-grid {
+  align-items: start;
+  position: relative;
+  z-index: 2;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+@media (min-width: 1024px) {
+  .hero-newspaper-grid {
+    align-items: center;
+  }
+}
+
+.hero-newspaper-stack {
+  display: block;
+  position: relative;
+  z-index: 10;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+}
+
+.hero-newspaper-masthead {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.hero-newspaper-masthead > * {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Label — spec: 14px, uppercase, opacity 0.5, tracking 0.3em */
+.hero-newspaper-label {
+  position: relative;
+  z-index: 10;
+  margin: 0 0 1rem;
+  padding: 0;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgb(0, 0, 0);
+  opacity: 0.5;
+}
+
+/* Main headline — pulled forward in Z vs panes at -500px (~700px separation @ 1000px perspective) */
+section[data-hero-section] .hero-newspaper-headline {
+  position: relative;
+  z-index: 10;
+  margin: 0;
+  padding: 0;
+  border: none;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  transform: translateZ(200px) rotateZ(0.001deg);
+  -webkit-transform: translateZ(200px) rotateZ(0.001deg);
+  font-family: var(--font-display) !important;
+  font-size: clamp(4rem, 8vw, 10rem) !important;
+  font-weight: 900 !important;
+  line-height: 0.85 !important;
+  letter-spacing: -0.06em !important;
+  text-transform: uppercase !important;
+  text-align: left;
+  color: #0a0a0a;
+  text-rendering: optimizeLegibility;
+}
+
+section[data-hero-section] .hero-newspaper-headline .split-line {
+  display: block;
+  width: 100%;
+}
+
+/* Mission — readable body grotesque */
+.hero-newspaper-mission {
+  position: relative;
+  z-index: 10;
+  margin: 2rem 0 0;
+  padding: 0;
+  max-width: 600px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.45;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: rgba(0, 0, 0, 0.72);
+}
+
+/* Service pill — frosted glass + 1px border (Safari: -webkit-backdrop-filter) */
+.hero-newspaper-pill {
+  position: relative;
+  z-index: 10;
+  margin-top: 2rem;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.5);
+  isolation: isolate;
+  -webkit-backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+  backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  padding: 0.875rem 1.5rem;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 8px 32px rgba(0, 0, 0, 0.04);
+}
+
+.hero-newspaper-pill__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.hero-newspaper-pill__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .hero-newspaper-pill__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+.hero-newspaper-pill__text {
+  font-family: var(--font-display);
+  font-size: clamp(0.625rem, 1.1vw, 0.8125rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.82);
+}
+
+.hero-vault-column {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+section[data-hero-section] [data-prism-glass-vault] {
+  position: relative;
+  z-index: 5;
+  transform: translateZ(120px) rotateZ(0.001deg);
+  -webkit-transform: translateZ(120px) rotateZ(0.001deg);
+}
+
+.hero-vault-scale {
+  width: 100%;
+}
+
+/* Atmospheric depth: cornflower radial wash behind hero copy */
+section[data-hero-section].hero-display-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: translateZ(-480px) scale(1.45);
+  -webkit-transform: translateZ(-480px) scale(1.45);
+  transform-origin: center center;
+  -webkit-transform-origin: center center;
+  background: radial-gradient(
+    circle at 20% 30%,
+    rgba(100, 149, 237, 0.05) 0%,
+    transparent 50%
+  );
+}
+
+/*
+ * WebKit / Safari compositor overdrive (@supports heuristic).
+ * Overrides dull backdrop compositing + locks GPU layers for nav + glass surfaces.
+ */
+@supports (-webkit-hyphens: none) {
+  :root {
+    --webkit-backdrop-filter: blur(20px) saturate(250%) brightness(1.1);
+  }
+
+  .hero-newspaper-stack,
+  .prism-preview-card:not([data-prism-glass-vault]),
+  .core-services-card,
+  a.core-services-cta,
+  header,
+  nav {
+    transform: translateZ(1px) rotateZ(0.001deg);
+    -webkit-transform: translateZ(1px) rotateZ(0.001deg);
+  }
+
+  .core-services-card,
+  a.core-services-cta {
+    -webkit-backdrop-filter: var(--webkit-backdrop-filter);
+    backdrop-filter: var(--webkit-backdrop-filter);
+    -webkit-font-smoothing: antialiased;
+    backface-visibility: hidden;
+  }
+
+  /* Crisp lock: edge definition on heavy display type in Safari’s soft renderer */
+  section[data-hero-section] .hero-newspaper-headline {
+    -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Promote vault to its own layer for backdrop + transform stability */
+  section[data-hero-section] [data-prism-glass-vault] {
+    will-change: opacity, transform;
+  }
+}

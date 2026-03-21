@@ -1,0 +1,40 @@
+---
+/**
+ * Hero Prism Preview — default glass card (matches case pages) + double-tap fullscreen.
+ */
+import { Maximize2 } from 'lucide-astro';
+import PrismScene from './PrismScene.astro';
+
+export interface Props {
+  /** Larger vault + canvas on home hero (newspaper grid balance) */
+  heroBillboard?: boolean;
+}
+
+const { heroBillboard = false } = Astro.props;
+---
+
+<div
+  data-prism-glass-vault
+  class:list={[
+    'prism-preview-card glass-surface prism-vault-glass relative w-full overflow-hidden rounded-3xl border border-black/10 bg-black/5',
+    heroBillboard ? 'p-7 md:p-8' : 'p-6',
+  ]}
+>
+  <div class="text-xs font-semibold uppercase tracking-[0.3em] text-[#0D0D0D]/40">
+    Prism Preview
+  </div>
+
+  <p
+    class="prism-vault-expand-hint mt-2 flex items-center gap-1.5 font-mono"
+    id="prism-vault-hint"
+  >
+    <Maximize2 class="h-3 w-3 shrink-0 opacity-45" strokeWidth={2} aria-hidden="true" />
+    <span>Double-tap to expand</span>
+  </p>
+
+  <div
+    class="mt-6 overflow-hidden rounded-2xl border border-black/[0.08] bg-[#030406] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
+  >
+    <PrismScene vaultPreview heroBillboard={heroBillboard} />
+  </div>
+</div>

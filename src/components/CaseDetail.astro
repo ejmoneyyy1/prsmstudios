@@ -2,6 +2,7 @@
 import type { Case } from '../data/cases';
 import { ArrowLeft } from 'lucide-astro';
 import PrismScene from './PrismScene.astro';
+import { PRESENCE_AUDIT_HREF } from '../consts';
 
 const { case: caseData } = Astro.props as { case: Case };
 
@@ -40,8 +41,8 @@ if (!caseData) {
 
         <div class="mt-10">
           <a
-            href="#"
-            class="inline-flex items-center gap-2 rounded-full border border-black/20 bg-transparent px-6 py-3 backdrop-blur-md hover:border-black/40 hover:bg-black/5 transition-colors"
+            href={PRESENCE_AUDIT_HREF}
+            class="presence-audit-btn inline-flex items-center gap-2 rounded-full border border-black/20 bg-transparent px-6 py-3 backdrop-blur-md hover:border-black/40 hover:bg-black/5 transition-colors"
           >
             <span class="text-sm tracking-wide font-medium">Request a Presence Audit</span>
           </a>

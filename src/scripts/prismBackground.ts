@@ -16,8 +16,15 @@ function initPrismBackground() {
   if (mount.dataset.prsmBgInit === 'true') return;
   mount.dataset.prsmBgInit = 'true';
 
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: true,
+    premultipliedAlpha: false,
+  });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.transmissionResolutionScale = 1;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -34,7 +41,9 @@ function initPrismBackground() {
   const prismGeo = new THREE.CylinderGeometry(1.05, 1.05, 2.4, 3, 1, false);
   prismGeo.rotateY(Math.PI / 2);
   const prismMat = new THREE.MeshPhysicalMaterial({
-    color: new THREE.Color('#ffffff'),
+    color: new THREE.Color('#fafafa'),
+    wireframe: false,
+    flatShading: false,
     transmission: 1,
     thickness: 2.2,
     roughness: 0,
@@ -196,6 +205,7 @@ function initPrismBackground() {
   const onResize = () => {
     const w = window.innerWidth;
     const h = window.innerHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(w, h);
     composer.setSize(w, h);
     camera.aspect = w / h;

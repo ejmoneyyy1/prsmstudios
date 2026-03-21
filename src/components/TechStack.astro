@@ -1,11 +1,18 @@
+---
+/**
+ * Brand velocity graph — upward signal line with scroll-driven draw + glow (“The Signal”).
+ */
+---
+
 <section
   data-tech-stack
   style="transform: translateZ(0)"
   class="mt-16 rounded-3xl border border-black/10 bg-transparent backdrop-blur-md p-6 glass-surface"
 >
   <div class="overflow-hidden">
-    <h3 data-reveal="chars" class="text-lg font-semibold tracking-tight text-[#0D0D0D]">
-      Technical Stack
+    <p class="text-xs font-semibold tracking-[0.28em] uppercase text-[#0D0D0D]/45">The signal</p>
+    <h3 data-reveal="chars" class="mt-2 text-lg font-semibold tracking-tight text-[#0D0D0D]">
+      Brand velocity
     </h3>
   </div>
 
@@ -13,70 +20,84 @@
     <div class="lg:col-span-8">
       <svg
         data-tech-stack-svg
-        viewBox="0 0 900 260"
+        viewBox="0 0 920 200"
         class="w-full h-auto"
         role="img"
-        aria-label="Client to API Gateway to Lambda to DynamoDB serverless architecture flow"
+        aria-label="Upward brand velocity chart: authority to conversion"
       >
         <defs>
-          <filter id="nodeGlow" x="-120%" y="-120%" width="340%" height="340%">
-            <feGaussianBlur stdDeviation="5" result="blur" />
+          <!-- Glow stack for “The Signal” -->
+          <filter id="signal-glow" x="-40%" y="-40%" width="180%" height="180%" color-interpolation-filters="sRGB">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur1" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur2" />
             <feMerge>
-              <feMergeNode in="blur" />
+              <feMergeNode in="blur2" />
+              <feMergeNode in="blur1" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
+          <linearGradient id="signal-line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#0d0d0d" stop-opacity="0.35" />
+            <stop offset="45%" stop-color="#0d0d0d" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="#2563eb" stop-opacity="0.95" />
+          </linearGradient>
         </defs>
 
-        <g data-stack-path-group stroke="rgba(0,0,0,0.2)" stroke-width="1" fill="none">
-          <path data-stack-path data-to="apigateway" d="M140 130 L310 130" />
-          <path data-stack-path data-to="lambda" d="M410 130 L560 130" />
-          <path data-stack-path data-to="dynamodb" d="M640 130 L780 130" />
+        <!-- Baseline (subtle) -->
+        <line x1="48" y1="168" x2="872" y2="168" stroke="rgba(0,0,0,0.08)" stroke-width="1" />
+
+        <!-- Wide glow stroke (drawn under main line) -->
+        <path
+          data-velocity-glow
+          d="M 56 158 C 180 158, 260 128, 380 108 S 620 62, 864 36"
+          fill="none"
+          stroke="url(#signal-line-grad)"
+          stroke-width="10"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          opacity="0.35"
+          filter="url(#signal-glow)"
+        />
+
+        <!-- Primary chart line (scroll-drawn; stroke-dash “drawSVG” style) -->
+        <path
+          data-velocity-line
+          d="M 56 158 C 180 158, 260 128, 380 108 S 620 62, 864 36"
+          fill="none"
+          stroke="url(#signal-line-grad)"
+          stroke-width="2.25"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+
+        <!-- End cap: signal pulse -->
+        <circle cx="864" cy="36" r="5" fill="#2563eb" opacity="0.25" data-velocity-cap />
+        <circle cx="864" cy="36" r="3" fill="#1d4ed8" data-velocity-cap-core />
+
+        <g fill="rgba(26,26,26,0.55)" font-size="10" letter-spacing="0.18em" font-weight="600">
+          <text x="56" y="192">BRAND AUTHORITY</text>
+          <text x="864" y="192" text-anchor="end">CONVERSION VELOCITY</text>
         </g>
-
-        <g>
-          <circle data-stack-node="client" cx="110" cy="130" r="28" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="1" />
-          <circle data-stack-glow="client" cx="110" cy="130" r="28" fill="none" stroke="black" stroke-width="1" opacity="0" filter="url(#nodeGlow)" />
-
-          <rect data-stack-node="apigateway" x="310" y="102" width="100" height="56" rx="8" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="1" />
-          <rect data-stack-glow="apigateway" x="310" y="102" width="100" height="56" rx="8" fill="none" stroke="black" stroke-width="1" opacity="0" filter="url(#nodeGlow)" />
-
-          <rect data-stack-node="lambda" x="560" y="102" width="80" height="56" rx="8" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="1" />
-          <rect data-stack-glow="lambda" x="560" y="102" width="80" height="56" rx="8" fill="none" stroke="black" stroke-width="1" opacity="0" filter="url(#nodeGlow)" />
-
-          <rect data-stack-node="dynamodb" x="780" y="98" width="90" height="64" rx="8" fill="none" stroke="rgba(0,0,0,0.85)" stroke-width="1" />
-          <rect data-stack-glow="dynamodb" x="780" y="98" width="90" height="64" rx="8" fill="none" stroke="black" stroke-width="1" opacity="0" filter="url(#nodeGlow)" />
-        </g>
-
-        <g fill="rgba(0,0,0,0.9)" font-size="12" letter-spacing="0.18em">
-          <text x="83" y="185">CLIENT</text>
-          <text x="312" y="185">API GATEWAY</text>
-          <text x="566" y="185">LAMBDA</text>
-          <text x="787" y="185">DYNAMODB</text>
-        </g>
-
-        <circle data-stack-ping cx="140" cy="130" r="4" fill="black" opacity="0" />
       </svg>
     </div>
 
     <div class="lg:col-span-4">
-      <div class="space-y-4 text-xs tracking-[0.26em] uppercase text-[#0D0D0D]/45">
-        <div class="overflow-hidden opacity-0" data-stack-label-mask="client">
-          <span data-stack-label="client" class="inline-block">AWS</span>
+      <div class="space-y-6 text-xs tracking-[0.22em] uppercase text-[#0D0D0D]/50">
+        <div class="overflow-hidden opacity-0" data-velocity-label-mask="authority">
+          <span data-velocity-label="authority" class="inline-block font-semibold tracking-[0.2em] text-[#1A1A1A]/90">
+            BRAND AUTHORITY
+          </span>
         </div>
-        <div class="overflow-hidden opacity-0" data-stack-label-mask="apigateway">
-          <span data-stack-label="apigateway" class="inline-block">AWS</span>
-        </div>
-        <div class="overflow-hidden opacity-0" data-stack-label-mask="lambda">
-          <span data-stack-label="lambda" class="inline-block">AWS</span>
-        </div>
-        <div class="overflow-hidden opacity-0" data-stack-label-mask="dynamodb">
-          <span data-stack-label="dynamodb" class="inline-block">AWS</span>
+        <div class="overflow-hidden opacity-0" data-velocity-label-mask="conversion">
+          <span data-velocity-label="conversion" class="inline-block font-semibold tracking-[0.2em] text-[#1A1A1A]/90">
+            CONVERSION VELOCITY
+          </span>
         </div>
       </div>
 
       <p data-reveal="lines" class="mt-6 text-[#0D0D0D]/60 leading-relaxed">
-        Engineered for 99.99% availability using AWS Serverless primitives.
+        Narrative clarity compounds into measurable lift—creative systems engineered to move the curve, not
+        just the metrics deck.
       </p>
     </div>
   </div>

@@ -1,0 +1,252 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ArrowLeft } from 'lucide-astro';
+import { CAL_BOOKING_EMBED_SRC, calEmbedUrl } from '../consts';
+
+const calUrls = {
+  '15': calEmbedUrl('15'),
+  '30': calEmbedUrl('30'),
+  '60': calEmbedUrl('60'),
+};
+---
+
+<Layout title="Presence Audit — PRSM STUDIO">
+  <main
+    data-audit-page
+    class="audit-page relative z-10 min-h-screen px-6 pb-28 pt-28 md:px-12 md:pt-32 md:pb-36"
+  >
+    <div class="mx-auto max-w-6xl">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 text-sm text-[#0D0D0D]/60 hover:text-[#0D0D0D] transition-colors"
+      >
+        <ArrowLeft class="h-4 w-4" />
+        Back to studio
+      </a>
+
+      <header class="mt-10 max-w-3xl">
+        <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#0D0D0D]/45">
+          Consultation portal
+        </p>
+        <h1 class="mt-4 text-3xl md:text-[2.35rem] font-semibold tracking-tight text-[#0D0D0D] leading-tight">
+          Initiate Your Presence Audit.
+        </h1>
+        <p class="mt-5 text-base md:text-lg text-[#1A1A1A]/75 leading-relaxed">
+          One page. Three layers of context — then you lock a slot. We show up to the call already oriented
+          to your URL, your friction, and your north star.
+        </p>
+        <p class="mt-4 text-sm italic text-[#0D0D0D]/55 border-l-2 border-black/10 pl-4">
+          We read every field before we open the call — not a generic “contact us” funnel.
+        </p>
+      </header>
+
+      <!-- Narrative thread (not a wizard — visual rhythm only) -->
+      <p
+        class="mt-10 text-[11px] font-semibold uppercase tracking-[0.35em] text-[#0D0D0D]/40"
+        aria-hidden="true"
+      >
+        Diagnostic · Velocity · Schedule
+      </p>
+
+      <div class="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12 items-start">
+        <div class="lg:col-span-8">
+          <div
+            data-audit-portal
+            class="prism-portal-card relative overflow-hidden rounded-[24px] border border-black/[0.05] p-8 md:p-10"
+          >
+            <form class="space-y-0" id="audit-intake-form" autocomplete="on">
+              <!-- 01 -->
+              <section class="audit-form-section pb-10 md:pb-12" aria-labelledby="audit-s1">
+                <div class="flex flex-wrap items-baseline gap-3">
+                  <span class="font-mono text-[11px] text-[#0D0D0D]/35">01</span>
+                  <h2 id="audit-s1" class="text-lg font-semibold text-[#0D0D0D]">
+                    Where is the ghost town?
+                  </h2>
+                </div>
+                <p class="mt-2 text-sm text-[#1A1A1A]/65 max-w-xl">
+                  URL & current pain — what feels invisible, brittle, or off-brand today.
+                </p>
+                <label class="mt-6 block">
+                  <span class="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D0D0D]/50"
+                    >Site or product URL</span
+                  >
+                  <input
+                    data-audit-field="url"
+                    type="url"
+                    name="audit_url"
+                    id="audit_url"
+                    placeholder="https://"
+                    class="mt-2 w-full rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-black/25"
+                  />
+                </label>
+                <label class="mt-5 block">
+                  <span class="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D0D0D]/50"
+                    >Current pain point</span
+                  >
+                  <textarea
+                    data-audit-field="pain"
+                    name="audit_pain"
+                    id="audit_pain"
+                    rows="4"
+                    placeholder="Traffic, trust, positioning, performance, creative…"
+                    class="mt-2 w-full resize-y rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-black/25"
+                  ></textarea>
+                </label>
+              </section>
+
+              <div class="border-t border-black/[0.07]"></div>
+
+              <!-- 02 -->
+              <section class="audit-form-section py-10 md:py-12" aria-labelledby="audit-s2">
+                <div class="flex flex-wrap items-baseline gap-3">
+                  <span class="font-mono text-[11px] text-[#0D0D0D]/35">02</span>
+                  <h2 id="audit-s2" class="text-lg font-semibold text-[#0D0D0D]">
+                    What is the target velocity?
+                  </h2>
+                </div>
+                <p class="mt-2 text-sm text-[#1A1A1A]/65 max-w-xl">
+                  Growth goals — pipeline, perception, launches, or scale you’re aiming for in the next 6–12
+                  months.
+                </p>
+                <label class="mt-6 block">
+                  <span class="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D0D0D]/50"
+                    >North star & milestones</span
+                  >
+                  <textarea
+                    data-audit-field="goals"
+                    name="audit_goals"
+                    id="audit_goals"
+                    rows="5"
+                    placeholder="Metrics, repositioning, narrative, channels, launch windows…"
+                    class="mt-2 w-full resize-y rounded-xl border border-black/10 bg-white/70 px-4 py-3 text-[#0D0D0D] placeholder:text-black/30 outline-none focus:border-black/25"
+                  ></textarea>
+                </label>
+              </section>
+
+              <div class="border-t border-black/[0.07]"></div>
+
+              <!-- 03 Calendar -->
+              <section class="audit-form-section pt-10 md:pt-12" aria-labelledby="audit-s3">
+                <div class="flex flex-wrap items-baseline gap-3">
+                  <span class="font-mono text-[11px] text-[#0D0D0D]/35">03</span>
+                  <h2 id="audit-s3" class="text-lg font-semibold text-[#0D0D0D]">
+                    Lock your session
+                  </h2>
+                </div>
+                <p class="mt-2 text-sm text-[#1A1A1A]/65">
+                  Choose a length, then pick a time — calendar stays in-frame on prsmstudios.io.
+                </p>
+
+                <fieldset
+                  data-cal-duration-group
+                  class="mt-2 border-0 p-0"
+                  aria-label="Meeting length"
+                >
+                  <legend class="text-xs font-semibold uppercase tracking-[0.18em] text-[#0D0D0D]/50">
+                    Duration
+                  </legend>
+                  <div class="mt-3 flex flex-wrap gap-2">
+                    <label class="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="cal_duration"
+                        value="15"
+                        data-cal-url={calUrls['15']}
+                        class="peer sr-only"
+                      />
+                      <span
+                        class="inline-block rounded-full border border-black/15 bg-white/70 px-4 py-2 text-sm font-medium text-[#0D0D0D] transition peer-checked:border-transparent peer-checked:bg-[#1A1A1A] peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-black/20"
+                      >
+                        15 min
+                      </span>
+                    </label>
+                    <label class="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="cal_duration"
+                        value="30"
+                        data-cal-url={calUrls['30']}
+                        class="peer sr-only"
+                        checked
+                      />
+                      <span
+                        class="inline-block rounded-full border border-black/15 bg-white/70 px-4 py-2 text-sm font-medium text-[#0D0D0D] transition peer-checked:border-transparent peer-checked:bg-[#1A1A1A] peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-black/20"
+                      >
+                        30 min
+                      </span>
+                    </label>
+                    <label class="cursor-pointer">
+                      <input
+                        type="radio"
+                        name="cal_duration"
+                        value="60"
+                        data-cal-url={calUrls['60']}
+                        class="peer sr-only"
+                      />
+                      <span
+                        class="inline-block rounded-full border border-black/15 bg-white/70 px-4 py-2 text-sm font-medium text-[#0D0D0D] transition peer-checked:border-transparent peer-checked:bg-[#1A1A1A] peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-black/20"
+                      >
+                        1 hour
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
+
+                <div class="relative mt-8 min-h-[min(68vh,620px)] rounded-2xl border border-black/[0.06] bg-white/40 overflow-hidden">
+                  <div
+                    data-audit-cal-loader
+                    class="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-white/88 backdrop-blur-sm"
+                  >
+                    <div
+                      class="h-10 w-10 animate-spin rounded-full border-2 border-[#1A1A1A]/15 border-t-[#1A1A1A]"
+                      aria-hidden="true"
+                    ></div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#0D0D0D]/70">
+                      Syncing calendar…
+                    </p>
+                  </div>
+                  <iframe
+                    data-audit-cal-iframe
+                    title="Schedule your presence audit"
+                    class="audit-cal-iframe relative z-[1] h-[min(68vh,620px)] w-full border-0"
+                    src={CAL_BOOKING_EMBED_SRC}
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                </div>
+              </section>
+            </form>
+          </div>
+        </div>
+
+        <aside class="lg:col-span-4 lg:sticky lg:top-28">
+          <div
+            class="rounded-2xl border border-black/10 bg-white/50 p-6 backdrop-blur-xl md:p-8"
+            style="backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);"
+          >
+            <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#0D0D0D]/45">
+              Technical requirements
+            </p>
+            <ul class="mt-6 space-y-5 text-sm text-[#1A1A1A]/80 leading-relaxed">
+              <li class="flex gap-3">
+                <span class="font-mono text-xs text-[#0D0D0D]/40">01</span>
+                <span>Bring your current metrics.</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="font-mono text-xs text-[#0D0D0D]/40">02</span>
+                <span>Define your 6-month North Star.</span>
+              </li>
+              <li class="flex gap-3">
+                <span class="font-mono text-xs text-[#0D0D0D]/40">03</span>
+                <span>Be ready for aerospace-grade feedback.</span>
+              </li>
+            </ul>
+            <p class="mt-8 border-t border-black/10 pt-6 text-xs text-[#0D0D0D]/50 leading-relaxed">
+              This portal keeps scheduling on prsmstudios.io — Cal.com powers the calendar under the hood.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</Layout>

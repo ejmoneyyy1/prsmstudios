@@ -2,9 +2,13 @@ export type CaseRoute =
   | 'city-pulse'
   | 'brand-reframing'
   | 'experience-engineering'
-  | 'cloud-native-scale';
+  | 'audit';
 
-export type CaseId = 'city-pulse' | 'brand-reframing' | 'experience-engineering' | 'cloud-native-scale';
+export type CaseId =
+  | 'city-pulse'
+  | 'brand-reframing'
+  | 'experience-engineering'
+  | 'venture-consultation';
 
 export type Case = {
   id: CaseId;
@@ -13,6 +17,10 @@ export type Case = {
   route: `/${CaseRoute}`;
   hoverImage: string; // path in public/
   summary: string;
+  /** Right-rail label; default "View" */
+  actionLabel?: string;
+  /** Shorter label for small viewports when actionLabel is long */
+  actionLabelShort?: string;
 };
 
 export const cases: Case[] = [
@@ -44,17 +52,18 @@ export const cases: Case[] = [
       'Conversion-focused UI architecture and motion systems built for performance under pressure.',
   },
   {
-    id: 'cloud-native-scale',
+    id: 'venture-consultation',
     indexLabel: '04',
-    title: 'Cloud-Native Scale',
-    route: '/cloud-native-scale',
+    title: 'The Venture Track',
+    route: '/audit',
     hoverImage: '/case-images/cloud-native-scale-hover.svg',
     summary:
-      'AWS-backed infrastructure strategy for reliability, velocity, and long-term growth.',
+      'High-stakes ideas deserve end-to-end execution—consultation through deployment, with City Pulse as our engineering benchmark.',
+    actionLabel: 'Start a Venture Consultation',
+    actionLabelShort: 'Consult',
   },
 ];
 
 export function getCaseById(id: CaseId) {
   return cases.find((c) => c.id === id) ?? null;
 }
-

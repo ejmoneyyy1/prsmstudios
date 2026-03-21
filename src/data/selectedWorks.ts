@@ -16,9 +16,9 @@ export const selectedWorks: SelectedWork[] = [
     meta: 'Engineering',
   },
   {
-    title: 'AWS Optimization Playbook',
+    title: 'Performance & Reliability Playbook',
     href: '#',
-    meta: 'Cloud',
+    meta: 'Systems',
   },
   {
     title: 'Client Case Study Template',

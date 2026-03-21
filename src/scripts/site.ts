@@ -13,9 +13,6 @@ const isSafariBrowser = (() => {
   return isSafariEngine;
 })();
 
-let prismLiftedEl: HTMLElement | null = null;
-let prismLiftPlaceholder: Comment | null = null;
-
 declare global {
   interface Window {
     __lenis?: {
@@ -25,7 +22,6 @@ declare global {
     };
     __prsmResizeBound?: boolean;
     __prsmPrismReadyBound?: boolean;
-    __prsmSplashDone?: boolean;
     __prsmCasesHoverState?: {
       isCursorMode: boolean;
       setOuterX: (x: number) => void;
@@ -36,7 +32,6 @@ declare global {
     __prsmCasesHoverMoveBound?: boolean;
     __prsmFlipGhost?: HTMLElement | null;
     __prsmTechStackPingTimer?: number;
-    __prsmSplashFailSafeDone?: boolean;
     __prsmEngineStarted?: boolean;
   }
 }
@@ -46,33 +41,6 @@ function cleanupGsap() {
   gsap.globalTimeline.clear();
 }
 
-function disableNativeViewTransitionsForSafari() {
-  if (!isSafariBrowser) return;
-  (document as any).startViewTransition = undefined;
-}
-
-function liftPrismCanvasBeforeSwap() {
-  const prismMount = document.querySelector<HTMLElement>('[data-prism-bg]');
-  if (!prismMount || prismLiftedEl) return;
-  const parent = prismMount.parentNode;
-  if (!parent) return;
-
-  prismLiftPlaceholder = document.createComment('prsm-prism-placeholder');
-  parent.insertBefore(prismLiftPlaceholder, prismMount);
-  document.body.appendChild(prismMount);
-  prismLiftedEl = prismMount;
-}
-
-function restorePrismCanvasAfterSwap() {
-  if (!prismLiftedEl || !prismLiftPlaceholder) return;
-  const parent = prismLiftPlaceholder.parentNode;
-  if (!parent) return;
-  parent.insertBefore(prismLiftedEl, prismLiftPlaceholder);
-  prismLiftPlaceholder.remove();
-  prismLiftedEl = null;
-  prismLiftPlaceholder = null;
-}
-
 function initLenis() {
   if (typeof window === 'undefined') return;
   if (window.__lenis) return;
@@ -80,13 +48,12 @@ function initLenis() {
   const wrapperEl = document.getElementById('lenis-wrapper') as HTMLElement | null;
   const contentEl = document.getElementById('lenis-content') as HTMLElement | null;
 
-  // Mobile optimization:
-  // Lenis can cause viewport clipping / odd scroll behavior on iOS & small screens.
-  // Prefer native scrolling on coarse-pointer devices and <=768px widths.
+  // Native scroll on tablets, half-width windows, touch, and phones — Lenis + h-screen overflow
+  // traps the scrollport and feels laggy/unresponsive on touch & narrow viewports.
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
-  const smallScreen = window.matchMedia('(max-width: 768px)').matches;
-  if (prefersReducedMotion || coarsePointer || smallScreen) return;
+  const narrowViewport = window.matchMedia('(max-width: 1024px)').matches;
+  if (prefersReducedMotion || coarsePointer || narrowViewport) return;
 
   // Don't let Lenis block the site (e.g. if chunks time out).
   import('lenis')
@@ -95,11 +62,11 @@ function initLenis() {
       window.__lenis = new Lenis({
         wrapper: wrapperEl ?? undefined,
         content: contentEl ?? undefined,
-        duration: 1.15,
+        duration: 0.85,
         smoothWheel: true,
         smoothTouch: false,
-        lerp: 0.08,
-        smooth: 1.5,
+        lerp: 0.12,
+        smooth: 1.15,
       } as any);
 
       const raf = (time: number) => {
@@ -117,78 +84,15 @@ function initLenis() {
     });
 }
 
-function initSplashLoader() {
-  const splash = document.querySelector<HTMLElement>('[data-splash]');
-  const counter = document.querySelector<HTMLElement>('[data-splash-counter]');
-  const splashScreen = document.querySelector<HTMLElement>('[data-splash-screen]');
-
-  if (!splash) return;
-
-  // If splash has already run once, remove any fresh markup immediately.
-  if (window.__prsmSplashDone) {
-    splash.remove();
-    return;
-  }
-
-  // If expected nodes are missing, fail open.
-  if (!counter || !splashScreen) {
-    splash.remove();
-    window.__prsmSplashDone = true;
-    return;
-  }
-
-  function closeSplash(node: HTMLElement) {
-    gsap.to(counter, { opacity: 0, duration: 0.4, ease: 'power2.out' });
-    gsap.to(splashScreen, {
-      clipPath: 'inset(100% 0 0 0)',
-      duration: 1,
-      ease: 'expo.inOut',
-    });
-    gsap.to(node, {
-      opacity: 0,
-      duration: 0.3,
-      delay: 0.85,
-      onComplete: () => {
-        node.remove();
-        window.__prsmSplashDone = true;
-      },
-    });
-  }
-
-  const progress = { value: 0 };
-  const tween = gsap.to(progress, {
-    value: 100,
-    duration: 1.4,
-    ease: 'steps(14)',
-    onUpdate: () => {
-      counter.textContent = String(Math.round(progress.value));
-    },
-    onComplete: () => {
-      counter.textContent = '100';
-      closeSplash(splash);
-    },
-  });
-
-  // Hard fail-safe: never allow the loader to block the app.
-  const hardTimeout = window.setTimeout(() => {
-    tween.kill();
-    counter.textContent = '100';
-    closeSplash(splash);
-  }, 2800);
-
-  splash.addEventListener(
-    'transitionend',
-    () => window.clearTimeout(hardTimeout),
-    { once: true }
-  );
-}
-
 function initSpitzerReveal() {
   const revealTargets = Array.from(
     document.querySelectorAll<HTMLElement>('[data-reveal="chars"], [data-reveal="lines"], [data-spitzer-reveal]')
   );
   const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!revealTargets.length) return;
+
+  /** SplitText + paused gsap.from — play handler stored for ScrollTrigger + above-the-fold fallback. */
+  const runRevealByEl = new WeakMap<HTMLElement, () => void>();
 
   revealTargets.forEach((el) => {
     if (el.dataset.splitReady === 'true') return;
@@ -209,12 +113,36 @@ function initSpitzerReveal() {
         const targets = mode === 'lines' ? self.lines : self.chars;
         if (!targets?.length) return undefined;
 
+        const isHeroHeadline = el.hasAttribute('data-reveal-hero');
+
         if (mode === 'lines') {
+          if (isHeroHeadline) {
+            /* Display hero: lines emerge from below (SplitText / “SplitType”-style rig) */
+            return gsap.from(targets, {
+              yPercent: 100,
+              duration: 1.1,
+              ease: 'power4.out',
+              stagger: 0.1,
+              paused: true,
+            });
+          }
           return gsap.from(targets, {
             yPercent: 105,
             duration: 0.9,
-            ease: 'expo.out',
+            ease: 'power4.out',
             stagger: 0.04,
+            paused: true,
+          });
+        }
+
+        if (isHeroHeadline) {
+          return gsap.from(targets, {
+            yPercent: 100,
+            rotation: 5,
+            transformOrigin: '50% 100%',
+            duration: 1.05,
+            ease: 'power4.out',
+            stagger: 0.01,
             paused: true,
           });
         }
@@ -223,7 +151,7 @@ function initSpitzerReveal() {
           yPercent: -120,
           scale: 1.2,
           duration: 1,
-          ease: 'expo.out',
+          ease: 'power4.out',
           stagger: 0.01,
           paused: true,
         });
@@ -231,19 +159,57 @@ function initSpitzerReveal() {
     } as any);
 
     const runReveal = () => {
+      if (el.dataset.revealPlayed === 'true') return;
       const anySplit = split as any;
-      const animation = anySplit?.animation;
+      // SplitText 3.x stores the onSplit tween on `_data.anim`, not `.animation`.
+      const animation = anySplit?._data?.anim as { play: (t?: number) => unknown } | undefined;
       if (animation?.play) {
+        el.dataset.revealPlayed = 'true';
         animation.play(0);
+      } else {
+        // Never leave copy invisible if the tween failed to attach.
+        el.dataset.revealPlayed = 'true';
+        gsap.set(el, { opacity: 1 });
+        gsap.set(el.querySelectorAll('.split-char, .split-line'), { clearProps: 'all' });
       }
     };
+    runRevealByEl.set(el, runReveal);
 
+    // `top 85%` = when the trigger's top crosses 85% down the viewport. Above-the-fold blocks
+    // (hero headline, etc.) start *above* that line and never cross it when scrolling down, so
+    // the paused animation never played — text looked "missing". Fallback below fixes that.
     ScrollTrigger.create({
       trigger: el,
       start: 'top 85%',
       once: true,
       onEnter: runReveal,
     });
+  });
+
+  const playVisibleReveals = () => {
+    revealTargets.forEach((el) => {
+      if (isReducedMotion) return;
+      if (el.dataset.revealPlayed === 'true') return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const intersectsViewport = rect.top < vh && rect.bottom > 0;
+      if (!intersectsViewport) return;
+      runRevealByEl.get(el)?.();
+    });
+  };
+
+  ScrollTrigger.addEventListener('refresh', playVisibleReveals);
+  ScrollTrigger.refresh();
+
+  requestAnimationFrame(() => {
+    playVisibleReveals();
+    // Fonts / late layout can shift rects after first frame — catch stragglers once more.
+    requestAnimationFrame(playVisibleReveals);
+  });
+
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+    playVisibleReveals();
   });
 
   if (isSafariBrowser) {
@@ -254,6 +220,65 @@ function initSpitzerReveal() {
       marginBottom: '-6px',
     });
   }
+}
+
+/** Hero mission subhead — weighted line reveal (ScrollTrigger + expo.out). */
+function initHeroMissionReveal() {
+  const el = document.querySelector<HTMLElement>('[data-hero-mission]');
+  if (!el) return;
+
+  const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (isReducedMotion) return;
+
+  const split = SplitText.create(el, {
+    type: 'lines',
+    autoSplit: true,
+    mask: 'lines',
+    linesClass: 'split-line',
+    onSplit: (self: any) => {
+      const lines = self.lines;
+      if (!lines?.length) return undefined;
+      return gsap.from(lines, {
+        yPercent: 110,
+        duration: 1.5,
+        ease: 'expo.out',
+        stagger: 0.1,
+        paused: true,
+      });
+    },
+  } as any);
+
+  const run = () => {
+    if (el.dataset.heroMissionPlayed === 'true') return;
+    const anim = (split as any)?._data?.anim as { play: (t?: number) => unknown } | undefined;
+    if (anim?.play) {
+      el.dataset.heroMissionPlayed = 'true';
+      anim.play(0);
+    } else {
+      el.dataset.heroMissionPlayed = 'true';
+      gsap.set(el, { opacity: 1 });
+      gsap.set(el.querySelectorAll('.split-line'), { clearProps: 'all' });
+    }
+  };
+
+  ScrollTrigger.create({
+    trigger: el,
+    start: 'top 88%',
+    once: true,
+    onEnter: run,
+  });
+
+  ScrollTrigger.refresh();
+  requestAnimationFrame(() => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) run();
+  });
+
+  window.addEventListener('load', () => {
+    ScrollTrigger.refresh();
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) run();
+  });
 }
 
 function initCityPulseFlip() {
@@ -288,7 +313,7 @@ function initCityPulseFlip() {
   if (!hasPendingFlip || !ghost || !cityPulseHero) return;
 
   sessionStorage.removeItem('prsm:city-pulse-flip');
-  const grainLayer = document.querySelector<HTMLElement>('.grain-layer');
+  const grainLayer = document.querySelector<HTMLElement>('.grain-agency');
   const baseGrainOpacity = grainLayer
     ? Number.parseFloat(window.getComputedStyle(grainLayer).opacity || '1')
     : 1;
@@ -319,7 +344,7 @@ function initCityPulseFlip() {
         scale: 1.2,
         stagger: 0.01,
         duration: 1.2,
-        ease: 'expo.out',
+        ease: 'power4.out',
       });
     });
   };
@@ -361,7 +386,7 @@ function initCityPulseFlip() {
         yPercent: 105,
         stagger: 0.04,
         duration: 0.9,
-        ease: 'expo.out',
+        ease: 'power4.out',
       });
     });
   };
@@ -675,7 +700,7 @@ function initCasesHoverReveal() {
   const setOuterX = gsap.quickSetter(outer, 'x', 'px');
   const setOuterY = gsap.quickSetter(outer, 'y', 'px');
 
-  // Bind a single global mousemove handler, so re-inits during `astro:after-swap` don't stack.
+  // Bind a single global mousemove handler so re-inits don't stack.
   if (isCursorMode && !window.__prsmCasesHoverMoveBound) {
     window.addEventListener(
       'mousemove',
@@ -783,7 +808,9 @@ function initMagneticButtons() {
   const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   if (!fineHover) return;
 
-  const buttons = Array.from(document.querySelectorAll<HTMLElement>('[data-magnetic]'));
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLElement>('[data-magnetic], .presence-audit-btn')
+  );
   if (!buttons.length) return;
 
   const centerOf = (el: HTMLElement) => {
@@ -851,6 +878,229 @@ function initMagneticButtons() {
   onResize();
 }
 
+/** Soft blurred cursor — GSAP ticker lerp 0.1 (elite production). */
+function initEliteCursor() {
+  if (typeof document === 'undefined') return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  if (prefersReducedMotion || coarsePointer) return;
+
+  const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!fineHover) return;
+
+  const el = document.createElement('div');
+  el.className = 'prsm-elite-cursor';
+  el.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(el);
+  document.documentElement.classList.add('prsm-elite-cursor-root');
+
+  let mouseX = window.innerWidth / 2;
+  let mouseY = window.innerHeight / 2;
+  let cx = mouseX;
+  let cy = mouseY;
+  let visible = false;
+
+  const LERP = 0.1;
+
+  const onMove = (e: MouseEvent) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    if (!visible) {
+      visible = true;
+      gsap.to(el, { opacity: 1, duration: 0.2, overwrite: true });
+    }
+  };
+
+  const onLeave = () => {
+    gsap.to(el, { opacity: 0, duration: 0.35, overwrite: true });
+    visible = false;
+  };
+
+  const tick = () => {
+    cx += (mouseX - cx) * LERP;
+    cy += (mouseY - cy) * LERP;
+    gsap.set(el, { x: cx, y: cy, xPercent: -50, yPercent: -50 });
+  };
+
+  gsap.ticker.add(tick);
+  window.addEventListener('mousemove', onMove, { passive: true });
+  document.documentElement.addEventListener('mouseleave', onLeave, { passive: true });
+
+  disposeEliteCursor = () => {
+    gsap.ticker.remove(tick);
+    window.removeEventListener('mousemove', onMove);
+    document.documentElement.removeEventListener('mouseleave', onLeave);
+    gsap.killTweensOf(el);
+    el.remove();
+    document.documentElement.classList.remove('prsm-elite-cursor-root');
+    disposeEliteCursor = undefined;
+  };
+}
+
+/** Glass vault — double-tap (&lt;300ms) or dblclick → fullscreen crystal + dark blur backdrop. */
+function initGlassVaultFullscreen() {
+  const card = document.querySelector<HTMLElement>('[data-prism-glass-vault]');
+  if (!card) return;
+
+  const refreshAfterLayout = () => {
+    window.dispatchEvent(new Event('resize'));
+    ScrollTrigger.refresh();
+  };
+
+  let isOpen = false;
+  let placeholder: HTMLDivElement | null = null;
+  let overlay: HTMLDivElement | null = null;
+  let closeHint: HTMLButtonElement | null = null;
+  let savedRect: DOMRect | null = null;
+  let onKeyDown: ((e: KeyboardEvent) => void) | null = null;
+
+  const closeModal = () => {
+    if (!isOpen || !placeholder || !savedRect || !overlay || !closeHint) return;
+
+    const ph = placeholder;
+    const ov = overlay;
+    const hint = closeHint;
+    const rect = savedRect;
+
+    gsap.timeline({
+      defaults: { ease: 'power3.inOut' },
+      onComplete: () => {
+        ph.parentNode?.insertBefore(card, ph);
+        ph.remove();
+        ov.remove();
+        hint.remove();
+        gsap.set(card, { clearProps: 'all' });
+        document.body.style.overflow = '';
+        placeholder = null;
+        overlay = null;
+        closeHint = null;
+        savedRect = null;
+        isOpen = false;
+        if (onKeyDown) {
+          window.removeEventListener('keydown', onKeyDown);
+          onKeyDown = null;
+        }
+        refreshAfterLayout();
+      },
+    })
+      .to(hint, { opacity: 0, duration: 0.2 }, 0)
+      .to(
+        card,
+        {
+          left: rect.left,
+          top: rect.top,
+          width: rect.width,
+          height: rect.height,
+          borderRadius: '1.5rem',
+          duration: 0.55,
+        },
+        0
+      )
+      .to(ov, { opacity: 0, duration: 0.4 }, 0);
+  };
+
+  const openModal = () => {
+    if (isOpen) return;
+    const r = card.getBoundingClientRect();
+    if (r.width < 8 || r.height < 8) return;
+
+    savedRect = r;
+    isOpen = true;
+
+    placeholder = document.createElement('div');
+    placeholder.setAttribute('aria-hidden', 'true');
+    placeholder.style.width = `${r.width}px`;
+    placeholder.style.height = `${r.height}px`;
+    placeholder.style.flexShrink = '0';
+    card.parentNode?.insertBefore(placeholder, card);
+
+    overlay = document.createElement('div');
+    overlay.className = 'prism-vault-overlay prism-vault-overlay--crystal';
+    gsap.set(overlay, { opacity: 0 });
+
+    closeHint = document.createElement('button');
+    closeHint.type = 'button';
+    closeHint.className = 'prism-vault-close-hint';
+    closeHint.textContent = 'Esc · Close';
+    closeHint.setAttribute('aria-label', 'Close glass vault');
+
+    document.body.appendChild(overlay);
+    document.body.appendChild(card);
+    document.body.appendChild(closeHint);
+    gsap.set(closeHint, { opacity: 0 });
+
+    const targetW = window.innerWidth;
+    const targetH = window.innerHeight;
+
+    gsap.set(card, {
+      position: 'fixed',
+      left: r.left,
+      top: r.top,
+      width: r.width,
+      height: r.height,
+      zIndex: 220,
+      margin: 0,
+      maxWidth: 'none',
+      borderRadius: '1.5rem',
+    });
+
+    document.body.style.overflow = 'hidden';
+
+    onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    window.addEventListener('keydown', onKeyDown);
+
+    gsap
+      .timeline({ onComplete: () => refreshAfterLayout() })
+      .to(overlay, { opacity: 1, duration: 0.5, ease: 'power2.out' }, 0)
+      .to(
+        card,
+        {
+          left: 0,
+          top: 0,
+          width: targetW,
+          height: targetH,
+          borderRadius: 0,
+          duration: 0.7,
+          ease: 'power3.inOut',
+        },
+        0
+      )
+      .to(closeHint, { opacity: 1, duration: 0.35, ease: 'power2.out' }, 0.12);
+
+    const onOverlayClick = (e: MouseEvent) => {
+      if (e.target === overlay) closeModal();
+    };
+    overlay.addEventListener('click', onOverlayClick);
+    closeHint.addEventListener('click', () => closeModal());
+  };
+
+  let lastTap = 0;
+  card.addEventListener(
+    'touchend',
+    (e) => {
+      if (isOpen) return;
+      const now = Date.now();
+      if (lastTap > 0 && now - lastTap < 300) {
+        e.preventDefault();
+        openModal();
+        lastTap = 0;
+      } else {
+        lastTap = now;
+      }
+    },
+    { passive: false }
+  );
+
+  card.addEventListener('dblclick', (e) => {
+    if (isOpen) return;
+    e.preventDefault();
+    openModal();
+  });
+}
+
 function initCityPulse() {
   const section = document.querySelector<HTMLElement>('[data-city-pulse]');
   const path = section?.querySelector<SVGPathElement>('[data-heartbeat-path]');
@@ -879,6 +1129,10 @@ function initCityPulse() {
   });
 }
 
+/**
+ * Brand velocity chart: GSAP “drawSVG” behavior via stroke-dashoffset (Club DrawSVG not required).
+ * Syncs glow stroke + reveals axis labels with scroll scrub.
+ */
 function initTechStack() {
   const section = document.querySelector<HTMLElement>('[data-tech-stack]');
   if (window.__prsmTechStackPingTimer) {
@@ -887,136 +1141,220 @@ function initTechStack() {
   }
   if (!section) return;
 
-  const svg = section.querySelector<SVGSVGElement>('[data-tech-stack-svg]');
-  const paths = Array.from(section.querySelectorAll<SVGPathElement>('[data-stack-path]'));
-  const ping = section.querySelector<SVGCircleElement>('[data-stack-ping]');
-  if (!svg || !paths.length || !ping) return;
+  const line = section.querySelector<SVGPathElement>('[data-velocity-line]');
+  const glow = section.querySelector<SVGPathElement>('[data-velocity-glow]');
+  const cap = section.querySelector<SVGCircleElement>('[data-velocity-cap]');
+  const capCore = section.querySelector<SVGCircleElement>('[data-velocity-cap-core]');
+  if (!line || !glow) return;
 
-  const nodeGlow = new Map(
-    Array.from(section.querySelectorAll<SVGElement>('[data-stack-glow]')).map((el) => [
-      el.getAttribute('data-stack-glow') ?? '',
-      el,
-    ])
-  );
-  const labelMasks = new Map(
-    Array.from(section.querySelectorAll<HTMLElement>('[data-stack-label-mask]')).map((el) => [
-      el.dataset.stackLabelMask ?? '',
-      el,
-    ])
-  );
-  const labels = new Map(
-    Array.from(section.querySelectorAll<HTMLElement>('[data-stack-label]')).map((el) => [
-      el.dataset.stackLabel ?? '',
-      el,
-    ])
-  );
+  const labelMaskAuthority = section.querySelector<HTMLElement>('[data-velocity-label-mask="authority"]');
+  const labelMaskConversion = section.querySelector<HTMLElement>('[data-velocity-label-mask="conversion"]');
 
-  paths.forEach((path) => {
-    const len = path.getTotalLength();
-    path.style.strokeDasharray = String(len);
-    path.style.strokeDashoffset = String(len);
-    path.style.stroke = 'rgba(255,255,255,0.2)';
-  });
-
-  gsap.set(ping, { opacity: 0 });
-  labelMasks.forEach((mask) => gsap.set(mask, { opacity: 0 }));
-
-  const pulseNode = (nodeId: string) => {
-    const glow = nodeGlow.get(nodeId);
-    const labelMask = labelMasks.get(nodeId);
-    const labelEl = labels.get(nodeId);
-    if (glow) {
-      gsap.fromTo(
-        glow,
-        { opacity: 0, scale: 1 },
-        { opacity: 1, scale: 1.05, duration: 0.22, yoyo: true, repeat: 1, ease: 'power2.out' }
-      );
-    }
-    if (!labelMask || !labelEl) return;
-    if (labelMask.dataset.awsLabelShown === 'true') return;
-    labelMask.dataset.awsLabelShown = 'true';
-    gsap.to(labelMask, { opacity: 1, duration: 0.2, ease: 'power2.out', overwrite: true });
-
-    const split = SplitText.create(labelEl, {
-      type: 'chars',
-      charsClass: 'split-char',
-    } as any);
-    const chars = (split as any).chars as HTMLElement[] | undefined;
-    if (!chars?.length) return;
-
-    gsap.from(chars, {
-      yPercent: -120,
-      scale: 1.2,
-      opacity: 1,
-      duration: 1.0,
-      ease: 'expo.out',
-      stagger: 0.01,
-      overwrite: 'auto',
-    });
+  const len = line.getTotalLength();
+  const applyDash = (path: SVGPathElement) => {
+    const l = path.getTotalLength();
+    path.style.strokeDasharray = String(l);
+    path.style.strokeDashoffset = String(l);
   };
+  applyDash(line);
+  applyDash(glow);
 
-  const drawTimeline = gsap.timeline({
-    paused: true,
-    defaults: { ease: 'power3.out' },
-  });
+  gsap.set([line, glow], { strokeDashoffset: len });
+  gsap.set([cap, capCore], { opacity: 0, scale: 0.6, transformOrigin: '50% 50%' });
+  if (labelMaskAuthority) gsap.set(labelMaskAuthority, { opacity: 0, y: 8 });
+  if (labelMaskConversion) gsap.set(labelMaskConversion, { opacity: 0, y: 8 });
 
-  paths.forEach((path, index) => {
-    const nodeId = path.dataset.to ?? '';
-    drawTimeline
-      .to(path, { strokeDashoffset: 0, duration: 0.55 }, index === 0 ? 0 : '>-0.05')
-      .to(path, { stroke: 'rgba(255,255,255,1)', duration: 0.15 }, '<')
-      .add(() => pulseNode(nodeId), '>-0.03')
-      .to(path, { stroke: 'rgba(255,255,255,0.2)', duration: 0.35 }, '>');
-  });
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion) {
+    line.style.strokeDashoffset = '0';
+    glow.style.strokeDashoffset = '0';
+    gsap.set([cap, capCore], { opacity: 1, scale: 1 });
+    if (labelMaskAuthority) gsap.set(labelMaskAuthority, { opacity: 1, y: 0 });
+    if (labelMaskConversion) gsap.set(labelMaskConversion, { opacity: 1, y: 0 });
+    return;
+  }
 
   ScrollTrigger.create({
     trigger: section,
-    start: 'top 80%',
-    once: true,
-    onEnter: () => drawTimeline.play(0),
+    start: 'top 85%',
+    end: 'bottom 20%',
+    scrub: 0.65,
+    invalidateOnRefresh: true,
+    onUpdate: (self) => {
+      const p = self.progress;
+      const offset = len * (1 - p);
+      line.style.strokeDashoffset = String(offset);
+      glow.style.strokeDashoffset = String(offset);
+      if (labelMaskAuthority) {
+        gsap.set(labelMaskAuthority, { opacity: Math.min(1, p * 3), y: 8 * (1 - Math.min(1, p * 3)) });
+      }
+      if (labelMaskConversion) {
+        const t = Math.max(0, (p - 0.35) / 0.65);
+        gsap.set(labelMaskConversion, { opacity: Math.min(1, t * 2.2), y: 8 * (1 - Math.min(1, t * 2.2)) });
+      }
+      const capVis = Math.max(0, (p - 0.72) / 0.28);
+      gsap.set(cap, { opacity: capVis * 0.45, scale: 0.7 + capVis * 0.35 });
+      gsap.set(capCore, { opacity: capVis, scale: 0.75 + capVis * 0.25 });
+    },
   });
+}
 
-  const movePingAlongPath = (path: SVGPathElement, duration = 0.7) =>
-    gsap.to({ p: 0 }, {
-      p: 1,
-      duration,
-      ease: 'none',
-      onStart: () => {
-        gsap.to(path, { stroke: 'rgba(255,255,255,1)', duration: 0.15 });
-        gsap.set(ping, { opacity: 1 });
-      },
-      onUpdate: function () {
-        const point = path.getPointAtLength(path.getTotalLength() * (this.targets()[0] as any).p);
-        ping.setAttribute('cx', `${point.x}`);
-        ping.setAttribute('cy', `${point.y}`);
-      },
-      onComplete: () => {
-        gsap.to(path, { stroke: 'rgba(255,255,255,0.2)', duration: 0.3 });
-      },
-    });
+/** City Pulse index showcase: device rises into frame, feature triad staggers in from the right. */
+function initCityPulseShowcase() {
+  const section = document.querySelector<HTMLElement>('[data-city-pulse-showcase]');
+  if (!section) return;
 
-  const runPing = () => {
-    const tl = gsap.timeline({
-      onComplete: () => {
-        gsap.to(ping, { opacity: 0, duration: 0.25, ease: 'power1.out' });
-      },
-    });
+  const device = section.querySelector<HTMLElement>('[data-showcase-device]');
+  const triad = section.querySelectorAll<HTMLElement>('[data-showcase-triad-item]');
+  const stores = section.querySelector<HTMLElement>('[data-showcase-stores]');
 
-    paths.forEach((path, idx) => {
-      const nodeId = path.dataset.to ?? '';
-      tl.add(movePingAlongPath(path), idx === 0 ? 0 : '>');
-      tl.to(
-        ping,
-        { scale: 1.9, opacity: 0, duration: 0.22, ease: 'power2.out' },
-        '>-0.08'
+  if (!device || !triad.length || !stores) return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    gsap.set([device, ...Array.from(triad), stores], { clearProps: 'transform,opacity' });
+    return;
+  }
+
+  gsap.set(device, { y: 100, opacity: 0, force3D: true });
+  gsap.set(triad, { x: 56, opacity: 0, force3D: true });
+  gsap.set(stores, { opacity: 0, y: 18, force3D: true });
+
+  gsap
+    .timeline({
+      scrollTrigger: {
+        trigger: section,
+        start: 'top 78%',
+        once: true,
+      },
+    })
+    .to(device, {
+      y: 0,
+      opacity: 1,
+      duration: 0.95,
+      ease: 'power3.out',
+    })
+    .to(
+      triad,
+      {
+        x: 0,
+        opacity: 1,
+        duration: 0.72,
+        stagger: 0.12,
+        ease: 'power3.out',
+      },
+      '-=0.58'
+    )
+    .to(
+      stores,
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power2.out',
+      },
+      '-=0.38'
+    );
+}
+
+/** /audit — single-page intake + Cal iframe (portal reveal + loader + local session sync). */
+function initAuditPortal() {
+  const root = document.querySelector<HTMLElement>('[data-audit-page]');
+  if (!root) return;
+
+  const portal = root.querySelector<HTMLElement>('[data-audit-portal]');
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (portal) {
+    if (prefersReducedMotion) {
+      gsap.set(portal, { clearProps: 'transform,filter,opacity' });
+    } else {
+      gsap.fromTo(
+        portal,
+        { scale: 0.96, filter: 'blur(10px)', opacity: 0.9 },
+        {
+          scale: 1,
+          filter: 'blur(0px)',
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power3.out',
+          delay: 0.08,
+        },
       );
-      tl.set(ping, { scale: 1, opacity: 1 });
-      tl.add(() => pulseNode(nodeId), '<');
+    }
+  }
+
+  const iframe = root.querySelector<HTMLIFrameElement>('[data-audit-cal-iframe]');
+  const loader = root.querySelector<HTMLElement>('[data-audit-cal-loader]');
+
+  const showCalLoader = () => {
+    if (!loader) return;
+    loader.style.display = 'flex';
+    gsap.set(loader, { opacity: 1 });
+  };
+
+  const hideCalLoader = () => {
+    if (!loader) return;
+    gsap.to(loader, {
+      opacity: 0,
+      duration: 0.45,
+      ease: 'power2.out',
+      onComplete: () => {
+        loader.style.display = 'none';
+      },
     });
   };
 
-  window.setTimeout(runPing, 1300);
-  window.__prsmTechStackPingTimer = window.setInterval(runPing, 3000);
+  const swapCalEmbed = (url: string) => {
+    if (!iframe || !url) return;
+    if (iframe.src === url) return;
+    showCalLoader();
+    const onLoad = () => {
+      hideCalLoader();
+      iframe.removeEventListener('load', onLoad);
+    };
+    iframe.addEventListener('load', onLoad);
+    iframe.src = url;
+    window.setTimeout(() => {
+      if (loader && loader.style.display !== 'none') hideCalLoader();
+    }, 9000);
+  };
+
+  if (iframe && loader) {
+    iframe.addEventListener('load', () => hideCalLoader(), { once: true });
+    window.setTimeout(() => {
+      if (loader.style.display !== 'none') hideCalLoader();
+    }, 9000);
+
+    root.querySelectorAll<HTMLInputElement>('input[name="cal_duration"]').forEach((radio) => {
+      radio.addEventListener('change', () => {
+        if (!radio.checked) return;
+        const url = radio.getAttribute('data-cal-url');
+        if (url) swapCalEmbed(url);
+      });
+    });
+  }
+
+  const persist = () => {
+    const url = root.querySelector<HTMLInputElement>('[data-audit-field="url"]')?.value ?? '';
+    const pain = root.querySelector<HTMLTextAreaElement>('[data-audit-field="pain"]')?.value ?? '';
+    const goals = root.querySelector<HTMLTextAreaElement>('[data-audit-field="goals"]')?.value ?? '';
+    try {
+      sessionStorage.setItem('prsm:audit:url', url);
+      sessionStorage.setItem('prsm:audit:pain', pain);
+      sessionStorage.setItem('prsm:audit:goals', goals);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  root.querySelector('#audit-intake-form')?.addEventListener('submit', (e) => e.preventDefault());
+
+  root.querySelectorAll('input, textarea').forEach((el) => {
+    el.addEventListener('change', persist);
+    el.addEventListener('blur', persist);
+  });
 }
 
 function bindLenisToScrollTrigger() {
@@ -1073,6 +1411,7 @@ function initAll() {
   bindLenisToScrollTrigger();
   bindRefreshHandlers();
   initSpitzerReveal();
+  initHeroMissionReveal();
   initCityPulseFlip();
   initCaseViewMagnetic();
   initHeroRefraction();
@@ -1081,9 +1420,12 @@ function initAll() {
   initCasesHoverReveal();
   initCasesScrollIntensity();
   initMagneticButtons();
-  initSplashLoader();
+  initGlassVaultFullscreen();
+  initEliteCursor();
   initCityPulse();
   initTechStack();
+  initCityPulseShowcase();
+  initAuditPortal();
 
   // Ensure ScrollTrigger measurements are correct after images load.
   // This prevents pinning offsets when images shift layout.
@@ -1093,8 +1435,6 @@ function initAll() {
 }
 
 if (typeof window !== 'undefined') {
-  disableNativeViewTransitionsForSafari();
-
   const start = () => {
     if (window.__prsmEngineStarted) return;
     window.__prsmEngineStarted = true;
@@ -1109,28 +1449,6 @@ if (typeof window !== 'undefined') {
       if (node) gsap.set(node, { opacity: 1 });
     }, 800);
 
-    // Loader fail-safe: if JS stalls and the splash never completes,
-    // forcibly reveal content after a short grace period.
-    const runLoaderFailSafe = () => {
-      if (window.__prsmSplashFailSafeDone) return;
-      // If splash completed normally, do nothing.
-      if (window.__prsmSplashDone) return;
-
-      const splash = document.querySelector<HTMLElement>('[data-splash]');
-      const smoothNode = document.getElementById('smooth-content');
-
-      if (smoothNode) gsap.to(smoothNode, { opacity: 1, duration: 0.5, ease: 'power2.out', overwrite: true });
-      if (splash) {
-        gsap.set(splash, { opacity: 0, pointerEvents: 'none', overwrite: true });
-        splash.remove();
-      }
-      window.__prsmSplashFailSafeDone = true;
-      console.log('PRSM Studio: Loader fail-safe applied');
-    };
-
-    window.addEventListener('load', runLoaderFailSafe, { once: true });
-    window.setTimeout(runLoaderFailSafe, 5000);
-
     console.log('PRSM Studio: Engine Initialized');
   };
 
@@ -1139,57 +1457,5 @@ if (typeof window !== 'undefined') {
   } else {
     start();
   }
-
-  // Astro route/view-transition lifecycle: ensure GSAP is initialized on navigation too.
-  document.addEventListener('astro:page-load', start);
-
-  document.addEventListener('astro:before-swap', () => {
-    liftPrismCanvasBeforeSwap();
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
-    const smooth = document.getElementById('smooth-content');
-    if (!smooth) return;
-
-    gsap.to(smooth, {
-      opacity: 0,
-      duration: 0.22,
-      ease: 'power2.in',
-      overwrite: true,
-    });
-  });
-
-  document.addEventListener('astro:after-swap', () => {
-    restorePrismCanvasAfterSwap();
-    disableNativeViewTransitionsForSafari();
-    cleanupGsap();
-    initAll();
-    ScrollTrigger.refresh();
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const smooth = document.getElementById('smooth-content');
-    if (!smooth) return;
-
-    gsap.set(smooth, { opacity: 0 });
-
-    // Fail-safe: ensure we never get stuck at opacity:0.
-    // Reduced-motion users should still see the content.
-    if (prefersReducedMotion) {
-      gsap.set(smooth, { opacity: 1 });
-      return;
-    }
-
-    gsap.to(smooth, {
-      opacity: 1,
-      duration: 0.35,
-      ease: 'power2.out',
-      overwrite: true,
-    });
-    window.setTimeout(() => {
-      const node = document.getElementById('smooth-content');
-      if (node) gsap.set(node, { opacity: 1 });
-    }, 900);
-  });
 }
 

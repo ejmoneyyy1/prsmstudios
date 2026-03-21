@@ -1,10 +1,27 @@
 ---
----
+export interface Props {
+  /** `hero` = inline card; `modal` = expanded lab view */
+  size?: 'hero' | 'modal';
+  /** Enables vault preview: crawl Z, glint light, transmission/thickness bump */
+  vaultPreview?: boolean;
+  /** Taller canvas on home hero to balance massive display type */
+  heroBillboard?: boolean;
+}
+
+const { size = 'hero', vaultPreview = false, heroBillboard = false } = Astro.props;
+
+const sizeClass =
+  size === 'modal'
+    ? 'h-[min(68vh,560px)] min-h-[300px] max-h-[600px]'
+    : vaultPreview && heroBillboard
+      ? 'h-[min(56vh,560px)] md:h-[min(64vh,640px)] min-h-[340px] md:min-h-[460px] max-h-[620px] md:max-h-[720px]'
+      : 'h-[42vh] md:h-[48vh] min-h-[280px] md:min-h-[360px] max-h-[480px] md:max-h-[560px]';
 ---
 
 <div
-  class="relative w-full h-[42vh] md:h-[48vh] min-h-[280px] md:min-h-[360px] max-h-[480px] md:max-h-[560px]"
+  class:list={['relative w-full', sizeClass]}
   data-prism-wrap
+  data-prism-preview={vaultPreview ? 'vault' : undefined}
 >
   <canvas data-prism-canvas class="w-full h-full block"></canvas>
 </div>

@@ -1,12 +1,10 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
 import { ArrowRight, Navigation } from 'lucide-astro';
 import PrismBackground from '../components/PrismBackground.astro';
-import Splash from '../components/Splash.astro';
-
+import Grain from '../components/Grain.astro';
 import '../styles/global.css';
-import { OG_IMAGE, SITE_URL } from '../consts';
-const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
+import { OG_IMAGE, PRESENCE_AUDIT_HREF, SITE_URL } from '../consts';
+const { title = 'PRSM STUDIO — Venture Studio' } = Astro.props;
 
 ---
 
@@ -24,7 +22,7 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <script is:inline>
@@ -33,18 +31,17 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
         const isSafari =
           /Safari/i.test(ua) && !/Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS/i.test(ua);
         if (!isSafari) return;
-        document.startViewTransition = undefined;
         document.documentElement.setAttribute('data-browser', 'safari');
       })();
     </script>
-
-    <ViewTransitions />
   </head>
   <body>
     <PrismBackground />
-    <Splash />
-    <div class="grain-layer grainy-noise" aria-hidden="true"></div>
-    <header class="fixed top-0 inset-x-0 z-50 pointer-events-none">
+    <Grain />
+    <header
+      id="site-nav"
+      class="site-nav fixed top-0 inset-x-0 z-[10050] pointer-events-none"
+    >
       <div class="mx-auto w-full max-w-6xl px-6 md:px-12 h-20 relative">
         <a
           href="/"
@@ -68,11 +65,11 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
             PRSM STUDIO
           </a>
           <a
-            href="/city-pulse"
+            href={PRESENCE_AUDIT_HREF}
             data-magnetic
-            class="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-black/20 bg-white/85 backdrop-blur-xl px-5 py-2 text-black font-semibold shadow-[0_0_20px_rgba(0,0,0,0.12)] transition-all hover:bg-white"
+            class="presence-audit-btn pointer-events-auto inline-flex items-center gap-2 rounded-full border border-black/20 bg-white/85 backdrop-blur-xl px-5 py-2 text-black font-semibold shadow-[0_0_20px_rgba(0,0,0,0.12)] transition-all hover:bg-white"
           >
-            <span>Get a Free Presence Audit</span>
+            <span>Request a Presence Audit</span>
             <ArrowRight class="h-4 w-4" />
           </a>
         </div>
@@ -83,7 +80,7 @@ const { title = 'PRSM STUDIO — Full-Spectrum Digital Agency' } = Astro.props;
     <!-- Use dvh to avoid mobile iOS address-bar viewport glitches -->
     <div
       id="lenis-wrapper"
-      class="relative z-20 h-[100dvh] overflow-hidden"
+      class="relative z-[10000] h-screen overflow-hidden"
       data-smooth-wrapper
     >
       <div id="lenis-content">
