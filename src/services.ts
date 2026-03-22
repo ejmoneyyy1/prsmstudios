@@ -46,6 +46,8 @@ export interface VentureCapability {
   title: string;
   description: string;
   href: string;
+  /** Optional conversion line (e.g. Venture Deployment IP messaging). */
+  tagline?: string;
 }
 
 export const ventureCapabilities: VentureCapability[] = [
@@ -66,6 +68,7 @@ export const ventureCapabilities: VentureCapability[] = [
   {
     srvId: 'SRV-03',
     title: 'Venture Deployment',
+    tagline: 'Your Idea. Your IP. Our Engineering.',
     description:
       'Full-stack mobile app engineering and proprietary software development.',
     href: PRESENCE_AUDIT_HREF,
@@ -74,7 +77,7 @@ export const ventureCapabilities: VentureCapability[] = [
     srvId: 'SRV-04',
     title: 'Cloud-Native Scale',
     description:
-      'Leveraging AWS infrastructure to ensure zero-downtime during peak demand.',
+      'Leveraging cloud-native infrastructure to ensure zero-downtime during peak demand.',
     href: '/cloud-native-scale',
   },
   {

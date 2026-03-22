@@ -4,7 +4,7 @@ import { ventureCapabilities } from '../services';
 
 <section
   data-venture-capabilities
-  class="relative z-10 border-y border-black/10 bg-[#FAFAFA]/80 py-20 md:py-28"
+  class="relative z-10 border-y border-black/10 bg-[#FAFAFA]/80"
   aria-labelledby="venture-capabilities-heading"
 >
   <div class="mx-auto w-full max-w-6xl px-6 md:px-12">
@@ -39,7 +39,19 @@ import { ventureCapabilities } from '../services';
             <h3 class="pr-16 text-xs font-semibold uppercase tracking-[0.2em] text-[#0D0D0D]">
               {c.title}
             </h3>
-            <p class="mt-4 flex-1 text-sm leading-relaxed text-[#0D0D0D]/65">{c.description}</p>
+            {c.tagline ? (
+              <p class="mt-2 font-mono text-[9px] font-medium uppercase leading-snug tracking-[0.16em] text-[#0D0D0D]/50">
+                {c.tagline}
+              </p>
+            ) : null}
+            <p
+              class:list={[
+                'flex-1 text-sm leading-relaxed text-[#0D0D0D]/65',
+                c.tagline ? 'mt-3' : 'mt-4',
+              ]}
+            >
+              {c.description}
+            </p>
             <span class="mt-6 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#0D0D0D]/35 transition-colors group-hover:text-[#0D0D0D]/55">
               Open capability
               <span aria-hidden="true" class="translate-x-0 transition-transform group-hover:translate-x-0.5">

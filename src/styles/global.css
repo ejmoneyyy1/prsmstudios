@@ -235,7 +235,27 @@ html.prsm-elite-cursor-root [role='button'] {
 
 /* Global film grain: see Grain.astro (feTurbulence @ 3% opacity, fixed full-viewport) */
 
-/* Venture 01 — device frame */
+/* Elite agency vertical rhythm — Hero, Manifesto, Target segments, Capabilities */
+section[data-hero-section],
+section[data-studio-manifesto],
+#target-segments,
+section[data-venture-capabilities] {
+  padding-block: max(3.5rem, 20vh);
+}
+
+/* Studio manifesto glass — readability over Prism */
+.studio-manifesto-glass {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* Site nav — clear separation from background panes while scrolling */
+#site-nav {
+  -webkit-backdrop-filter: blur(15px);
+  backdrop-filter: blur(15px);
+}
+
+/* Venture 01 / City Pulse showcase — device frame (replaces legacy FeaturedProject) */
 .venture-device-wrap {
   min-height: 320px;
 }
@@ -253,9 +273,12 @@ html.prsm-elite-cursor-root [role='button'] {
   border-radius: 2.75rem;
   padding: 0.55rem;
   background: linear-gradient(155deg, #2a2a2e 0%, #0c0c0e 55%, #1a1b20 100%);
+  /* Ambient lift + premium 1px inner bezel glow */
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.15));
   box-shadow:
     0 50px 120px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
   transform: rotateY(-14deg) rotateX(5deg);
   transform-style: preserve-3d;
 }
@@ -854,13 +877,20 @@ section[data-hero-section].hero-display-section::before {
   .core-services-card,
   a.core-services-cta,
   header,
-  nav {
+  nav,
+  /* Manifesto, target segments table/cards, venture capability glass cards — Safari clip parity */
+  section[data-studio-manifesto],
+  section[data-studio-manifesto] .studio-manifesto-glass,
+  #target-segments,
+  .segments-signal-card,
+  [data-venture-cap-card] {
     transform: translateZ(1px) rotateZ(0.001deg);
     -webkit-transform: translateZ(1px) rotateZ(0.001deg);
   }
 
   .core-services-card,
-  a.core-services-cta {
+  a.core-services-cta,
+  [data-venture-cap-card] {
     -webkit-backdrop-filter: var(--webkit-backdrop-filter);
     backdrop-filter: var(--webkit-backdrop-filter);
     -webkit-font-smoothing: antialiased;
