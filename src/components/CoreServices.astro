@@ -1,49 +1,54 @@
 ---
-import { Layers, Zap, Rocket } from 'lucide-astro';
-import { coreServices } from '../services';
-
-const iconMap = {
-  layers: Layers,
-  zap: Zap,
-  rocket: Rocket,
-} as const;
+import { ventureCapabilities } from '../services';
 ---
 
 <section
-  class="relative z-10 py-16 md:py-24 border-y border-black/10 bg-black/[0.02]"
-  aria-labelledby="core-services-heading"
+  data-venture-capabilities
+  class="relative z-10 border-y border-black/10 bg-[#FAFAFA]/80 py-20 md:py-28"
+  aria-labelledby="venture-capabilities-heading"
 >
   <div class="mx-auto w-full max-w-6xl px-6 md:px-12">
-    <p class="text-xs uppercase tracking-[0.22em] text-black/45">The consultation pivot</p>
+    <p class="font-mono text-[10px] uppercase tracking-[0.28em] text-[#0D0D0D]/40">
+      Capabilities · Matrix
+    </p>
     <h2
-      id="core-services-heading"
-      class="mt-3 text-2xl md:text-3xl font-semibold tracking-tight text-[#0D0D0D]"
+      id="venture-capabilities-heading"
+      class="mt-3 text-2xl font-semibold tracking-tight text-[#0D0D0D] md:text-3xl"
     >
-      Core services
+      Venture capabilities
     </h2>
-    <p class="mt-3 text-sm md:text-base text-[#0D0D0D]/55 max-w-2xl">
-      Positioning, product, and experience—how a venture studio ships, not how a résumé reads.
+    <p class="mt-4 max-w-2xl text-sm leading-relaxed text-[#0D0D0D]/55 md:text-base">
+      Engineering that outperforms the standard agency surface area — six venture-grade systems,
+      built for apps, e-commerce, and proprietary software at scale.
     </p>
 
-    <div class="mt-12 grid gap-6 md:grid-cols-3">
-      {coreServices.map((s) => {
-        const Icon = iconMap[s.icon];
-        return (
-          <article class="core-services-card rounded-2xl border border-black/10 bg-white/60 backdrop-blur-md p-6 md:p-8 glass-surface flex flex-col">
-            <div class="flex items-center gap-3 text-[#0D0D0D]/50">
-              <Icon class="h-5 w-5" strokeWidth={1.5} aria-hidden="true" />
-            </div>
-            <h3 class="mt-5 text-lg font-semibold tracking-tight text-[#0D0D0D]">{s.title}</h3>
-            <p class="mt-3 text-sm text-[#0D0D0D]/65 leading-relaxed flex-1">{s.description}</p>
-            <a
-              href={s.inquiryHref}
-              class="presence-audit-btn mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-black/20 bg-white/50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0D0D0D]/85 backdrop-blur-md transition-colors hover:border-black/40 hover:bg-white/80 core-services-cta"
+    <div class="mt-14 grid grid-cols-1 gap-5 md:grid-cols-3 md:gap-6">
+      {
+        ventureCapabilities.map((c) => (
+          <a
+            href={c.href}
+            data-venture-cap-card
+            class="venture-cap-card group relative flex min-h-[200px] flex-col rounded-xl border border-[rgba(0,0,0,0.05)] bg-white/45 p-6 pt-11 text-left shadow-sm outline-offset-4 transition-[transform,box-shadow,border-color] duration-300 ease-out [backdrop-filter:blur(20px)] [-webkit-backdrop-filter:blur(20px)] hover:-translate-y-[10px] hover:border-[rgba(0,0,0,0.2)] hover:shadow-[0_0_0_1px_rgba(0,0,0,0.08),0_22px_48px_-18px_rgba(0,0,0,0.14)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#0D0D0D]/25 motion-reduce:translate-y-0 motion-reduce:opacity-100"
+          >
+            <span
+              class="pointer-events-none absolute right-5 top-4 font-mono text-[10px] font-medium tracking-[0.14em] text-[#0D0D0D]/38 transition-colors duration-300 group-hover:text-[#0D0D0D]/55"
+              aria-hidden="true"
             >
-              {s.inquiryLabel}
-            </a>
-          </article>
-        );
-      })}
+              {c.srvId}
+            </span>
+            <h3 class="pr-16 text-xs font-semibold uppercase tracking-[0.2em] text-[#0D0D0D]">
+              {c.title}
+            </h3>
+            <p class="mt-4 flex-1 text-sm leading-relaxed text-[#0D0D0D]/65">{c.description}</p>
+            <span class="mt-6 inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.2em] text-[#0D0D0D]/35 transition-colors group-hover:text-[#0D0D0D]/55">
+              Open capability
+              <span aria-hidden="true" class="translate-x-0 transition-transform group-hover:translate-x-0.5">
+                →
+              </span>
+            </span>
+          </a>
+        ))
+      }
     </div>
   </div>
 </section>

@@ -40,6 +40,58 @@ export const coreServices: CoreService[] = [
   },
 ];
 
+/** Home “Venture Capabilities” grid — monospace SRV-## IDs, glass cards, GSAP stagger. */
+export interface VentureCapability {
+  srvId: string;
+  title: string;
+  description: string;
+  href: string;
+}
+
+export const ventureCapabilities: VentureCapability[] = [
+  {
+    srvId: 'SRV-01',
+    title: 'Digital Reframing',
+    description:
+      'Architecting brand authority and market positioning for high-growth ventures.',
+    href: '/brand-reframing',
+  },
+  {
+    srvId: 'SRV-02',
+    title: 'Experience Engineering',
+    description:
+      'Cinematic, high-performance web systems and headless e-commerce engines.',
+    href: '/experience-engineering',
+  },
+  {
+    srvId: 'SRV-03',
+    title: 'Venture Deployment',
+    description:
+      'Full-stack mobile app engineering and proprietary software development.',
+    href: PRESENCE_AUDIT_HREF,
+  },
+  {
+    srvId: 'SRV-04',
+    title: 'Cloud-Native Scale',
+    description:
+      'Leveraging AWS infrastructure to ensure zero-downtime during peak demand.',
+    href: '/cloud-native-scale',
+  },
+  {
+    srvId: 'SRV-05',
+    title: 'Performance Audits',
+    description: 'Identifying technical leakage and optimizing conversion velocity.',
+    href: '/audit',
+  },
+  {
+    srvId: 'SRV-06',
+    title: 'Product Strategy',
+    description:
+      'From MVP to global scale. We define the roadmap for your next software asset.',
+    href: PRESENCE_AUDIT_HREF,
+  },
+];
+
 export interface MissionService {
   id: string;
   title: string;

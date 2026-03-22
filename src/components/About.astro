@@ -1,0 +1,108 @@
+---
+/**
+ * Studio Manifesto — replaces generic “about”; 2-col + glass + GSAP (site.ts).
+ */
+---
+
+<section
+  data-studio-manifesto
+  class="relative z-10 px-6 py-16 md:px-8 md:py-24"
+  aria-labelledby="studio-manifesto-heading"
+>
+  <div
+    class="studio-manifesto-glass mx-auto max-w-6xl rounded-2xl border border-zinc-900/10 bg-white/55 px-6 py-12 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.12)] backdrop-blur-[10px] md:px-12 md:py-16 lg:px-14 lg:py-20"
+  >
+    <div
+      class="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20 lg:items-start"
+    >
+      <!-- Headline -->
+      <div class="min-w-0">
+        <h2
+          id="studio-manifesto-heading"
+          data-manifesto-headline
+          class="manifesto-headline max-w-[20ch] text-[clamp(2rem,5vw,4.75rem)] font-black uppercase leading-[0.9] tracking-[-0.03em] text-zinc-950"
+        >
+          We don&apos;t just build sites. We architect assets.
+        </h2>
+      </div>
+
+      <!-- Signal blocks + CTA -->
+      <div class="min-w-0 space-y-10 md:space-y-12">
+        <article data-manifesto-signal class="border-b border-zinc-900/10 pb-10 md:pb-12">
+          <p class="font-mono text-[10px] font-semibold tracking-[0.35em] text-zinc-500">Signal 01</p>
+          <h3 class="mt-3 text-lg font-bold uppercase tracking-[0.08em] text-zinc-950 md:text-xl">
+            Reframe.
+          </h3>
+          <p class="mt-3 text-sm leading-relaxed text-zinc-600 md:text-base">
+            We strip the noise from legacy brands to reveal the authority underneath. Positioning is
+            engineering.
+          </p>
+        </article>
+
+        <article data-manifesto-signal class="border-b border-zinc-900/10 pb-10 md:pb-12">
+          <p class="font-mono text-[10px] font-semibold tracking-[0.35em] text-zinc-500">Signal 02</p>
+          <h3 class="mt-3 text-lg font-bold uppercase tracking-[0.08em] text-zinc-950 md:text-xl">
+            Deploy.
+          </h3>
+          <p class="mt-3 text-sm leading-relaxed text-zinc-600 md:text-base">
+            We turn raw concepts into mission-critical software. From City Pulse to your next SaaS, we
+            ship at scale.
+          </p>
+        </article>
+
+        <article data-manifesto-signal class="border-b border-zinc-900/10 pb-10 md:pb-12 last:border-0 last:pb-0">
+          <p class="font-mono text-[10px] font-semibold tracking-[0.35em] text-zinc-500">Signal 03</p>
+          <h3 class="mt-3 text-lg font-bold uppercase tracking-[0.08em] text-zinc-950 md:text-xl">
+            Audit.
+          </h3>
+          <p class="mt-3 text-sm leading-relaxed text-zinc-600 md:text-base">
+            We identify the &apos;leakage&apos; in your digital presence. Data-driven strategy to ensure
+            zero-friction growth.
+          </p>
+        </article>
+
+        <div data-manifesto-cta class="pt-2">
+          <a
+            href="/consultation"
+            class="group inline-flex items-center gap-2 border-b border-zinc-950 pb-0.5 text-sm font-semibold uppercase tracking-[0.18em] text-zinc-950 transition-colors hover:border-zinc-500 hover:text-zinc-600"
+          >
+            START THE AUDIT
+            <span
+              class="inline-block transition-transform group-hover:translate-x-0.5"
+              aria-hidden="true"
+            >
+              →
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .manifesto-headline {
+    background-image: linear-gradient(
+      105deg,
+      #09090b 0%,
+      #52525b 42%,
+      #18181b 50%,
+      #52525b 58%,
+      #09090b 100%
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* Fallback if clip unsupported */
+    -webkit-text-fill-color: transparent;
+  }
+
+  @supports not (background-clip: text) {
+    .manifesto-headline {
+      color: #09090b;
+      -webkit-text-fill-color: inherit;
+      background: none;
+    }
+  }
+</style>

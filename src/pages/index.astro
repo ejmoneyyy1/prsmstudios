@@ -1,11 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
-import FeaturedProject from '../components/FeaturedProject.astro';
+import About from '../components/About.astro';
 import CityPulseShowcase from '../components/CityPulseShowcase.astro';
 import CoreServices from '../components/CoreServices.astro';
-import CasesList from '../components/CasesList.astro';
-import SelectedWorks from '../components/SelectedWorks.astro';
 import { CONTACT_EMAIL, PRESENCE_AUDIT_HREF } from '../consts';
 
 const brandName = 'PRSM STUDIO';
@@ -17,11 +15,9 @@ const missionCopy =
 <Layout>
   <main class="relative z-10">
     <Hero />
-    <FeaturedProject />
+    <About />
     <CityPulseShowcase />
     <CoreServices />
-    <CasesList />
-    <SelectedWorks />
 
     <footer class="relative py-60">
       <div class="mx-auto w-full max-w-6xl px-6 md:px-12">

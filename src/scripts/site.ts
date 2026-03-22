@@ -84,6 +84,148 @@ function initLenis() {
     });
 }
 
+/**
+ * Venture Capabilities grid — staggered scroll-in (CoreServices.astro).
+ * Uses IntersectionObserver (not ScrollTrigger) so it works with Lenis: the document
+ * window does not scroll on desktop; ST tied to `window` never fires `onEnter`.
+ */
+function initVentureCapabilitiesReveal() {
+  const section = document.querySelector<HTMLElement>('[data-venture-capabilities]');
+  if (!section) return;
+
+  const cards = section.querySelectorAll<HTMLElement>('[data-venture-cap-card]');
+  if (!cards.length) return;
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    gsap.set(cards, { opacity: 1, y: 0, clearProps: 'opacity,transform' });
+    return;
+  }
+
+  gsap.set(cards, { opacity: 0, y: 28 });
+
+  const runReveal = () => {
+    if (section.dataset.ventureRevealDone === 'true') return;
+    section.dataset.ventureRevealDone = 'true';
+    gsap.to(cards, {
+      opacity: 1,
+      y: 0,
+      duration: 0.78,
+      ease: 'power3.out',
+      stagger: 0.11,
+      clearProps: 'transform',
+    });
+  };
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        obs.disconnect();
+        runReveal();
+      }
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -6% 0px' }
+  );
+  observer.observe(section);
+
+  /** If the block is already on screen (or Lenis/layout shifts), don’t leave cards stuck invisible. */
+  const tryRevealIfVisible = () => {
+    if (section.dataset.ventureRevealDone === 'true') return;
+    const rect = section.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const visible = rect.top < vh * 0.9 && rect.bottom > vh * 0.08;
+    if (!visible) return;
+    observer.disconnect();
+    runReveal();
+  };
+
+  requestAnimationFrame(() => {
+    tryRevealIfVisible();
+    requestAnimationFrame(tryRevealIfVisible);
+  });
+  window.addEventListener('load', tryRevealIfVisible);
+}
+
+/** Studio Manifesto (About.astro): scroll-in opacity + gradient headline shimmer. IO-based for Lenis. */
+function initStudioManifesto() {
+  const root = document.querySelector<HTMLElement>('[data-studio-manifesto]');
+  if (!root) return;
+
+  const headline = root.querySelector<HTMLElement>('[data-manifesto-headline]');
+  const signals = root.querySelectorAll<HTMLElement>('[data-manifesto-signal]');
+  const cta = root.querySelector<HTMLElement>('[data-manifesto-cta]');
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReducedMotion) {
+    const nodes = [headline, ...Array.from(signals), cta].filter(Boolean) as HTMLElement[];
+    gsap.set(nodes, { opacity: 1, y: 0, clearProps: 'opacity,transform' });
+    return;
+  }
+
+  const targets = [headline, ...Array.from(signals), cta].filter(Boolean) as HTMLElement[];
+  gsap.set(targets, { opacity: 0.22, y: 26, force3D: true });
+
+  const runReveal = () => {
+    if (root.dataset.manifestoPlayed === 'true') return;
+    root.dataset.manifestoPlayed = 'true';
+
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    if (headline) {
+      tl.to(headline, { opacity: 1, y: 0, duration: 0.95 });
+    }
+    if (signals.length) {
+      tl.to(
+        signals,
+        { opacity: 1, y: 0, duration: 0.78, stagger: 0.13 },
+        headline ? '-=0.55' : 0
+      );
+    }
+    if (cta) {
+      tl.to(cta, { opacity: 1, y: 0, duration: 0.55 }, '-=0.4');
+    }
+
+    if (headline) {
+      gsap.set(headline, { backgroundPosition: '0% 50%' });
+      gsap.to(headline, {
+        backgroundPosition: '100% 50%',
+        duration: 4.2,
+        ease: 'sine.inOut',
+        repeat: -1,
+        yoyo: true,
+      });
+    }
+  };
+
+  const observer = new IntersectionObserver(
+    (entries, obs) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        obs.disconnect();
+        runReveal();
+      }
+    },
+    { threshold: 0.12, rootMargin: '0px 0px -7% 0px' }
+  );
+  observer.observe(root);
+
+  const tryRevealIfVisible = () => {
+    if (root.dataset.manifestoPlayed === 'true') return;
+    const rect = root.getBoundingClientRect();
+    const vh = window.innerHeight;
+    if (rect.top < vh * 0.88 && rect.bottom > vh * 0.06) {
+      observer.disconnect();
+      runReveal();
+    }
+  };
+
+  requestAnimationFrame(() => {
+    tryRevealIfVisible();
+    requestAnimationFrame(tryRevealIfVisible);
+  });
+  window.addEventListener('load', tryRevealIfVisible);
+}
+
 function initSpitzerReveal() {
   const revealTargets = Array.from(
     document.querySelectorAll<HTMLElement>('[data-reveal="chars"], [data-reveal="lines"], [data-spitzer-reveal]')
@@ -1411,6 +1553,8 @@ function initAll() {
   bindLenisToScrollTrigger();
   bindRefreshHandlers();
   initSpitzerReveal();
+  initVentureCapabilitiesReveal();
+  initStudioManifesto();
   initHeroMissionReveal();
   initCityPulseFlip();
   initCaseViewMagnetic();

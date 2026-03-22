@@ -36,6 +36,11 @@
   width: 100%;
 }
 
+html {
+  /* Fixed site header — keep in-page anchors / focus from hiding under the bar */
+  scroll-padding-top: max(6rem, calc(env(safe-area-inset-top, 0px) + 4.5rem));
+}
+
 html,
 body {
   height: 100%;

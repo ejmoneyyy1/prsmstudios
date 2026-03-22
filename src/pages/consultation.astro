@@ -1,0 +1,27 @@
+---
+/**
+ * Alias URL for the presence audit intake — static-friendly redirect to `/audit`.
+ */
+const title = 'Consultation — PRSM Studio';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta http-equiv="refresh" content="0;url=/audit" />
+    <link rel="canonical" href="/audit" />
+    <meta name="robots" content="noindex" />
+  </head>
+  <body
+    style="font-family: system-ui, sans-serif; padding: 2rem; color: #18181b; background: #fafafa;"
+  >
+    <p>
+      <a href="/audit" style="color: inherit; font-weight: 600;">Continue to consultation →</a>
+    </p>
+    <script is:inline>
+      window.location.replace('/audit');
+    </script>
+  </body>
+</html>
