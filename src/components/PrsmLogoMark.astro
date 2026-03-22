@@ -1,0 +1,76 @@
+---
+/**
+ * PRSM mark — hex + isometric cube (from Logo.tsx). Use `idPrefix` when multiple marks exist in the DOM.
+ */
+interface Props {
+  class?: string;
+  idPrefix?: string;
+}
+const { class: className = 'h-[52px] w-[52px] shrink-0', idPrefix = 'prsm' } = Astro.props;
+const p = idPrefix;
+---
+
+<svg
+  class={className}
+  width="52"
+  height="52"
+  viewBox="0 0 52 52"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <defs>
+    <linearGradient id={`${p}-electric`} x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00F5FF"></stop>
+      <stop offset="50%" stop-color="#FF00FF"></stop>
+      <stop offset="100%" stop-color="#FFD700"></stop>
+    </linearGradient>
+    <linearGradient id={`${p}-dark`} x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1a2e"></stop>
+      <stop offset="100%" stop-color="#16213e"></stop>
+    </linearGradient>
+    <radialGradient id={`${p}-glow`} cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00F5FF" stop-opacity="0.8"></stop>
+      <stop offset="100%" stop-color="#FF00FF" stop-opacity="0"></stop>
+    </radialGradient>
+  </defs>
+  <circle cx="26" cy="26" r="24" fill={`url(#${p}-glow)`} opacity="0.3"></circle>
+  <path
+    d="M26 4 L44 15 L44 37 L26 48 L8 37 L8 15 Z"
+    fill={`url(#${p}-dark)`}
+    stroke={`url(#${p}-electric)`}
+    stroke-width="2"></path>
+  <g opacity="1">
+    <path d="M26 18 L34 22 L26 26 L18 22 Z" fill="#00F5FF" opacity="0.9"></path>
+    <path d="M18 22 L18 30 L26 34 L26 26 Z" fill="#FF00FF" opacity="0.7"></path>
+    <path d="M26 26 L26 34 L34 30 L34 22 Z" fill="#FFD700" opacity="0.7"></path>
+  </g>
+  <path
+    d="M8 12 L8 15 M8 15 L11 15"
+    stroke="#00F5FF"
+    stroke-width="2"
+    stroke-linecap="round"></path>
+  <path
+    d="M44 12 L44 15 M44 15 L41 15"
+    stroke="#FF00FF"
+    stroke-width="2"
+    stroke-linecap="round"></path>
+  <path
+    d="M8 40 L8 37 M8 37 L11 37"
+    stroke="#FFD700"
+    stroke-width="2"
+    stroke-linecap="round"></path>
+  <path
+    d="M44 40 L44 37 M44 37 L41 37"
+    stroke="#00F5FF"
+    stroke-width="2"
+    stroke-linecap="round"></path>
+  <line
+    x1="12"
+    y1="26"
+    x2="40"
+    y2="26"
+    stroke={`url(#${p}-electric)`}
+    stroke-width="0.5"
+    opacity="0.5"></line>
+</svg>

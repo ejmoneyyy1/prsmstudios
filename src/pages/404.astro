@@ -1,0 +1,37 @@
+---
+/**
+ * Emits `/404.html` at the site root. Cloudflare Pages treats projects *without*
+ * a top-level `404.html` as SPAs and serves `index.html` for every path — which
+ * breaks real static files like `/sitemap-index.xml` for crawlers.
+ * @see https://developers.cloudflare.com/pages/configuration/serving-pages/#single-page-application-spa-rendering
+ */
+import Layout from '../layouts/Layout.astro';
+import { ArrowLeft } from 'lucide-astro';
+import { SITE_NAME } from '../consts';
+
+const title = `Page not found | ${SITE_NAME}`;
+const description =
+  'This page is unavailable. Return to PRSM Studio for venture deployment, brand reframing, and experience engineering.';
+---
+
+<Layout title={title} description={description} ogType="website">
+  <main
+    class="relative z-10 mx-auto flex min-h-[70vh] max-w-3xl flex-col justify-center px-6 pb-24 pt-32 md:px-12 md:pt-40"
+  >
+    <p class="text-xs font-semibold uppercase tracking-[0.28em] text-[#0D0D0D]/45">404</p>
+    <h1 class="mt-4 text-3xl font-semibold tracking-tight text-[#0D0D0D] md:text-4xl">
+      This path doesn&apos;t resolve.
+    </h1>
+    <p class="mt-5 text-base leading-relaxed text-[#1A1A1A]/75 md:text-lg">
+      The link may be outdated, or the page may have moved. Head back to the studio and we&apos;ll
+      get you oriented.
+    </p>
+    <a
+      href="/"
+      class="mt-10 inline-flex items-center gap-2 text-sm font-medium text-[#0D0D0D]/70 transition-colors hover:text-[#0D0D0D]"
+    >
+      <ArrowLeft class="h-4 w-4" aria-hidden="true" />
+      Back to home
+    </a>
+  </main>
+</Layout>

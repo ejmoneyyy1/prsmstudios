@@ -1,7 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { ArrowLeft } from 'lucide-astro';
-import { CAL_BOOKING_EMBED_SRC, calEmbedUrl } from '../consts';
+import { CAL_BOOKING_EMBED_SRC, SITE_NAME, calEmbedUrl } from '../consts';
+
+const auditDescription =
+  'Book a strategic presence audit with PRSM Studio — digital transformation, brand reframing, experience engineering, and venture deployment for high-intent teams.';
 
 const calUrls = {
   '15': calEmbedUrl('15'),
@@ -10,7 +13,7 @@ const calUrls = {
 };
 ---
 
-<Layout title="Presence Audit — PRSM STUDIO">
+<Layout title={`Presence Audit | ${SITE_NAME}`} description={auditDescription} ogType="website">
   <main
     data-audit-page
     class="audit-page relative z-10 min-h-screen px-6 pb-28 pt-28 md:px-12 md:pt-32 md:pb-36"

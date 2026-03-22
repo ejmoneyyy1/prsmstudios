@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && node scripts/sync-seo-functions.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "astro": "ASTRO_TELEMETRY_DISABLED=1 astro"
   },
@@ -20,6 +20,7 @@
     "three": "^0.183.2"
   },
   "devDependencies": {
+    "@astrojs/sitemap": "^3.7.1",
     "@astrojs/tailwind": "^5.0.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.38",

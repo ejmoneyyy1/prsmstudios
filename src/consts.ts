@@ -1,7 +1,23 @@
 export const SITE_URL = 'https://prsmstudios.io';
 
-// Must be an absolute path from the site root (works well with static hosts like Cloudflare Pages).
-export const OG_IMAGE = '/og/prsmstudios-og.svg';
+/** Short brand name for Open Graph `og:site_name` and UI. */
+export const SITE_NAME = 'PRSM Studio';
+
+/** Default `<title>` / primary SEO title (homepage and fallback). */
+export const SITE_TITLE = 'PRSM Studio | Venture Deployment & Brand Reframing';
+
+/** Default meta description sitewide (override per page when needed). */
+export const SITE_DESCRIPTION =
+  'Engineering high-fidelity digital presences. We architect, rebrand, and deploy mission-critical software and apps for those who refuse to stay invisible.';
+
+/**
+ * Social share image (absolute URL built with SITE_URL).
+ * Place a 1200×630 (or larger) asset at `public/og-image.png` for best results.
+ */
+export const OG_IMAGE = '/og-image.png';
+
+/** @deprecated Use OG_IMAGE — kept if external links still reference the old asset. */
+export const OG_IMAGE_LEGACY = '/og/prsmstudios-og.svg';
 
 /** Public address for `mailto:` links (footer, etc.). */
 export const CONTACT_EMAIL = 'eaalobuia@gmail.com';
@@ -52,3 +68,7 @@ export const CITY_PULSE_UI_VIDEO_URL = '';
 /** Poster / fallback screenshot inside the device frame. */
 export const CITY_PULSE_UI_SCREENSHOT = '/case-images/city-pulse-hover.svg';
 
+/**
+ * Replace with your real verification string from Google Search Console → Settings → Ownership verification.
+ */
+export const GOOGLE_SITE_VERIFICATION = 'GSC_VERIFICATION_HASH_HERE';

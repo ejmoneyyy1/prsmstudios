@@ -1,0 +1,65 @@
+---
+/**
+ * Strategic SEO + social metadata for prsmstudios.io (high-intent digital transformation).
+ */
+import {
+  GOOGLE_SITE_VERIFICATION,
+  OG_IMAGE,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from '../consts';
+
+interface Props {
+  /** Full document title (browser tab + og:title) */
+  title: string;
+  /** Meta + og:description + twitter:description */
+  description?: string;
+  /** Homepage / marketing vs case-study depth pages */
+  ogType?: 'website' | 'article';
+  /** Path under public/, e.g. `/og-image.png` */
+  ogImagePath?: string;
+  /** Canonical page URL (include trailing slash policy to match deployment) */
+  canonicalURL: URL;
+}
+
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  ogType = 'website',
+  ogImagePath = OG_IMAGE,
+  canonicalURL,
+} = Astro.props;
+
+const pageUrl = canonicalURL.href;
+const imageUrl = new URL(ogImagePath, SITE_URL).href;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={pageUrl} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
+<meta name="theme-color" content="#16213e" />
+
+<meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />
+
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:type" content={ogType} />
+<meta property="og:url" content={pageUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:alt" content={`${SITE_NAME} — digital transformation & venture deployment`} />
+<meta property="og:locale" content="en_US" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />

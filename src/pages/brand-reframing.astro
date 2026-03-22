@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import CaseDetail from '../components/CaseDetail.astro';
 import { getCaseById } from '../data/cases';
+import { SITE_NAME } from '../consts';
 
 const caseData = getCaseById('brand-reframing');
 
@@ -10,7 +11,7 @@ if (!caseData) {
 }
 ---
 
-<Layout title={`${caseData.title} — PRSM STUDIO`}>
+<Layout title={`${caseData.title} | ${SITE_NAME}`} description={caseData.summary} ogType="article">
   <CaseDetail case={caseData}>
     <section class="relative z-20 py-10">
       <h2 data-reveal="chars" class="text-2xl md:text-3xl font-semibold tracking-tight text-[#0D0D0D]">

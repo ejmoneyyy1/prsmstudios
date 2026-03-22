@@ -1,0 +1,8 @@
+# Ensure crawlers receive XML, not a SPA/HTML fallback (Cloudflare Pages, Netlify, etc.)
+/sitemap-index.xml
+  Content-Type: application/xml; charset=utf-8
+  X-Content-Type-Options: nosniff
+
+/sitemap-0.xml
+  Content-Type: application/xml; charset=utf-8
+  X-Content-Type-Options: nosniff

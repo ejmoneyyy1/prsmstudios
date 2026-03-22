@@ -4,6 +4,9 @@
 
 # build output
 dist/
+
+# generated from dist/ by scripts/sync-seo-functions.mjs (recreated on each build)
+functions/*.js
 # generated types
 .astro/
 

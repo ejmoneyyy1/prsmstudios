@@ -1,24 +1,39 @@
 ---
-import { ArrowRight, Navigation } from 'lucide-astro';
+import { ArrowRight } from 'lucide-astro';
+import BaseHead from '../components/BaseHead.astro';
 import PrismBackground from '../components/PrismBackground.astro';
 import Grain from '../components/Grain.astro';
+import PrsmLogoMark from '../components/PrsmLogoMark.astro';
 import '../styles/global.css';
-import { OG_IMAGE, PRESENCE_AUDIT_HREF, SITE_URL } from '../consts';
-const { title = 'PRSM STUDIO — Venture Studio' } = Astro.props;
+import { PRESENCE_AUDIT_HREF, SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from '../consts';
 
+export interface Props {
+  /** Full `<title>`; defaults to SITE_TITLE */
+  title?: string;
+  /** Meta / OG description; defaults to SITE_DESCRIPTION */
+  description?: string;
+  /** `website` for homepage & services; `article` for case studies */
+  ogType?: 'website' | 'article';
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  ogType = 'website',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="color-scheme" content="light" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
-    <meta property="og:site_name" content="PRSM STUDIO" />
-    <meta property="og:title" content={title} />
-    <meta property="og:image" content={`${SITE_URL}${OG_IMAGE}`} />
+    <BaseHead
+      title={title}
+      description={description}
+      ogType={ogType}
+      canonicalURL={canonicalURL}
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -55,10 +70,11 @@ const { title = 'PRSM STUDIO — Venture Studio' } = Astro.props;
           </a>
           <a
             href="/"
-            class="site-nav-tap flex items-center gap-1.5 text-[#0D0D0D] font-black tracking-[0.16em] uppercase text-[11px] px-2 py-2"
+            class="site-nav-tap flex items-center gap-2 text-[#0D0D0D] px-2 py-1.5"
+            aria-label="PRSM Studio — Home"
           >
-            <Navigation class="h-4 w-4 shrink-0" aria-hidden="true" />
-            <span class="whitespace-nowrap">PRSM</span>
+            <PrsmLogoMark class="h-7 w-7 shrink-0" idPrefix="nav-m" />
+            <span class="whitespace-nowrap font-black tracking-[0.16em] uppercase text-[11px]">PRSM</span>
           </a>
           <a
             href="/brand-reframing"
@@ -95,10 +111,22 @@ const { title = 'PRSM STUDIO — Venture Studio' } = Astro.props;
         <div class="pointer-events-none absolute left-1/2 top-3 flex -translate-x-1/2 items-center gap-3">
           <a
             href="/"
-            class="pointer-events-auto flex items-center gap-2 text-[#0D0D0D] font-black tracking-[0.2em] uppercase text-xs"
+            class="pointer-events-auto flex items-center gap-2.5 text-[#0D0D0D]"
+            aria-label="PrsmStudios — Home"
           >
-            <Navigation class="h-4 w-4" aria-hidden="true" />
-            PRSM STUDIO
+            <PrsmLogoMark class="h-9 w-9 shrink-0" idPrefix="nav-d" />
+            <div class="flex flex-col items-start leading-tight">
+              <span
+                class="bg-gradient-to-r from-cyan-500 via-fuchsia-500 to-amber-400 bg-clip-text text-sm font-bold tracking-tight text-transparent md:text-base"
+              >
+                PrsmStudios
+              </span>
+              <span
+                class="text-[8px] font-semibold uppercase tracking-[0.28em] text-[#0D0D0D]/45 md:text-[9px]"
+              >
+                Digital consulting
+              </span>
+            </div>
           </a>
           <a
             href={PRESENCE_AUDIT_HREF}
@@ -132,4 +160,3 @@ const { title = 'PRSM STUDIO — Venture Studio' } = Astro.props;
     </script>
   </body>
 </html>
-
