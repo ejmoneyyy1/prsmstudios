@@ -44,25 +44,8 @@ const robots = readFileSync(join(dist, 'robots.txt'), 'utf8');
 const sitemapIndex = readFileSync(join(dist, 'sitemap-index.xml'), 'utf8');
 const sitemap0 = readFileSync(join(dist, 'sitemap-0.xml'), 'utf8');
 
-let pngBlock = '';
-const pngPath = join(dist, 'og-image.png');
-if (existsSync(pngPath)) {
-  const b64 = readFileSync(pngPath).toString('base64');
-  const b64lit = JSON.stringify(b64);
-  pngBlock = `
-  if (path === '/og-image.png') {
-    const b64 = ${b64lit};
-    const binary = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-    return new Response(binary, {
-      headers: {
-        'Content-Type': 'image/png',
-        'Cache-Control': 'public, max-age=86400',
-        'X-Content-Type-Options': 'nosniff',
-      },
-    });
-  }
-`;
-}
+// /og-image.png is served as a real static file from /public — Cloudflare Pages
+// serves it directly without any middleware intercept needed.
 
 const robotsLit = JSON.stringify(robots);
 const sitemapIndexLit = JSON.stringify(sitemapIndex);
@@ -105,7 +88,7 @@ export async function onRequest(context) {
       },
     });
   }
-${pngBlock}
+
   return context.next();
 }
 `;

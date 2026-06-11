@@ -11,7 +11,16 @@ export default defineConfig({
   integrations: [
     tailwind(),
     // @astrojs/sitemap must stay LAST — it runs after routes are finalized.
-    sitemap(),
+    // Exclude redirect stubs and legal/utility pages — only index real content.
+    sitemap({
+      filter: (page) => ![
+        'https://prsmstudios.io/consultation',
+        'https://prsmstudios.io/cloud-native-scale',
+        'https://prsmstudios.io/privacy',
+        'https://prsmstudios.io/terms',
+        'https://prsmstudios.io/404',
+      ].includes(page),
+    }),
   ],
   vite: {
     optimizeDeps: {

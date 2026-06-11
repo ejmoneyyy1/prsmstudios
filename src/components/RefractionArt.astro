@@ -1,0 +1,141 @@
+---
+/**
+ * Fixed full-page refraction artwork: wireframe prism anchored to the left edge
+ * splits an incoming white beam into a vivid full-spectrum fan sweeping right.
+ * Pure SVG + CSS — zero JS, sits above the WebGL canvas, below content.
+ */
+---
+
+<div
+  class="refraction-art fixed inset-0 z-[2] pointer-events-none overflow-hidden hidden lg:block"
+  aria-hidden="true"
+>
+  <svg
+    class="absolute inset-0 h-full w-full"
+    viewBox="0 0 1600 900"
+    fill="none"
+    preserveAspectRatio="xMidYMid slice"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <defs>
+      <linearGradient id="ra-edge" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%"  stop-color="#22d3ee"/>
+        <stop offset="45%" stop-color="#d946ef"/>
+        <stop offset="100%" stop-color="#fbbf24"/>
+      </linearGradient>
+      <linearGradient id="ra-beam" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"   stop-color="#0D0D0D" stop-opacity="0"/>
+        <stop offset="60%"  stop-color="#0D0D0D" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#0D0D0D" stop-opacity="0.8"/>
+      </linearGradient>
+      <linearGradient id="ra-red" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#ff2255" stop-opacity="0"/>
+        <stop offset="14%" stop-color="#ff2255" stop-opacity="0.62"/>
+        <stop offset="100%" stop-color="#ff2255" stop-opacity="0.20"/>
+      </linearGradient>
+      <linearGradient id="ra-orange" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#ff8a00" stop-opacity="0"/>
+        <stop offset="14%" stop-color="#ff8a00" stop-opacity="0.58"/>
+        <stop offset="100%" stop-color="#ff8a00" stop-opacity="0.18"/>
+      </linearGradient>
+      <linearGradient id="ra-gold" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#facc15" stop-opacity="0"/>
+        <stop offset="14%" stop-color="#facc15" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#facc15" stop-opacity="0.17"/>
+      </linearGradient>
+      <linearGradient id="ra-green" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#34d399" stop-opacity="0"/>
+        <stop offset="14%" stop-color="#34d399" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#34d399" stop-opacity="0.17"/>
+      </linearGradient>
+      <linearGradient id="ra-cyan" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0"/>
+        <stop offset="14%" stop-color="#22d3ee" stop-opacity="0.62"/>
+        <stop offset="100%" stop-color="#22d3ee" stop-opacity="0.20"/>
+      </linearGradient>
+      <linearGradient id="ra-violet" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#a855f7" stop-opacity="0"/>
+        <stop offset="14%" stop-color="#a855f7" stop-opacity="0.58"/>
+        <stop offset="100%" stop-color="#a855f7" stop-opacity="0.18"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Incoming white beam — far left into the prism's left face -->
+    <line x1="0" y1="475" x2="120" y2="448" stroke="url(#ra-beam)" stroke-width="3" class="ra-beam-line"/>
+
+    <!-- ── Wireframe triangular prism (3D), anchored hard left, vertically centered ── -->
+    <g class="ra-prism">
+      <!-- back triangle -->
+      <path d="M 205 255 L 305 475 L 100 475 Z" stroke="url(#ra-edge)" stroke-width="1.4" opacity="0.45"/>
+      <!-- front triangle -->
+      <path d="M 145 215 L 255 445 L 30 445 Z" stroke="url(#ra-edge)" stroke-width="2.5"/>
+      <!-- connecting edges -->
+      <line x1="145" y1="215" x2="205" y2="255" stroke="url(#ra-edge)" stroke-width="1.6" opacity="0.75"/>
+      <line x1="255" y1="445" x2="305" y2="475" stroke="url(#ra-edge)" stroke-width="1.6" opacity="0.75"/>
+      <line x1="30"  y1="445" x2="100" y2="475" stroke="url(#ra-edge)" stroke-width="1.6" opacity="0.75"/>
+      <!-- glass facet fill -->
+      <path d="M 145 215 L 255 445 L 30 445 Z" fill="url(#ra-edge)" opacity="0.07"/>
+    </g>
+
+    <!-- ── Spectral fan: 6 vivid rays exit the right face and sweep the page ── -->
+    <g class="ra-spectrum">
+      <polygon class="ra-ray ra-ray-1" points="238,402 1600,90  1600,180" fill="url(#ra-red)"/>
+      <polygon class="ra-ray ra-ray-2" points="241,410 1600,240 1600,325" fill="url(#ra-orange)"/>
+      <polygon class="ra-ray ra-ray-3" points="243,418 1600,385 1600,465" fill="url(#ra-gold)"/>
+      <polygon class="ra-ray ra-ray-4" points="243,426 1600,520 1600,600" fill="url(#ra-green)"/>
+      <polygon class="ra-ray ra-ray-5" points="241,434 1600,655 1600,735" fill="url(#ra-cyan)"/>
+      <polygon class="ra-ray ra-ray-6" points="238,442 1600,790 1600,875" fill="url(#ra-violet)"/>
+    </g>
+  </svg>
+</div>
+
+<style>
+  /* The whole artwork slowly hue-rotates — the spectrum itself shifts through
+     the rainbow, so the page colors are never static. */
+  .refraction-art svg {
+    animation: ra-hue-cycle 24s linear infinite;
+  }
+
+  @keyframes ra-hue-cycle {
+    0%   { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+  }
+
+  /* Prism floats + tilts — matches the WebGL prisms' motion language */
+  .ra-prism {
+    transform-origin: 165px 345px;
+    animation: ra-prism-float 8s ease-in-out infinite;
+  }
+
+  @keyframes ra-prism-float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50%      { transform: translateY(-16px) rotate(1.6deg); }
+  }
+
+  /* Rays pulse on staggered phases — light shimmering through glass */
+  .ra-ray { animation: ra-ray-shimmer 6s ease-in-out infinite; }
+  .ra-ray-1 { animation-delay: 0s; }
+  .ra-ray-2 { animation-delay: -1s; }
+  .ra-ray-3 { animation-delay: -2s; }
+  .ra-ray-4 { animation-delay: -3s; }
+  .ra-ray-5 { animation-delay: -4s; }
+  .ra-ray-6 { animation-delay: -5s; }
+
+  @keyframes ra-ray-shimmer {
+    0%, 100% { opacity: 0.55; }
+    50%      { opacity: 1; }
+  }
+
+  .ra-beam-line {
+    animation: ra-beam-pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes ra-beam-pulse {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .refraction-art svg, .ra-prism, .ra-ray, .ra-beam-line { animation: none; }
+  }
+</style>

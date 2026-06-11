@@ -805,6 +805,11 @@ function initBentoGridHover() {
 }
 
 function initScrollBoundScaling() {
+  // Skip scroll-scrub scaling on touch devices — scrub ticks on every frame and causes jank.
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const narrowViewport = window.matchMedia('(max-width: 1024px)').matches;
+  if (coarsePointer || narrowViewport) return;
+
   const featuredImages = Array.from(document.querySelectorAll<HTMLElement>('[data-featured-image]'));
   featuredImages.forEach((el) => {
     // Start slightly smaller and grow as the user scrolls.
@@ -910,7 +915,11 @@ function initCasesScrollIntensity() {
   if (!targets.length) return;
 
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReducedMotion) {
+  // Skip scroll-driven RGB intensity on touch devices — the prism WebGL already
+  // runs lighter on mobile; scrub listeners compound CPU cost unnecessarily.
+  const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const narrowViewport = window.matchMedia('(max-width: 1024px)').matches;
+  if (prefersReducedMotion || coarsePointer || narrowViewport) {
     window.dispatchEvent(new CustomEvent('prsm:scroll-intensity', { detail: { intensity: 0 } }));
     return;
   }
@@ -1363,41 +1372,40 @@ function initCityPulseShowcase() {
   gsap.set(triad, { x: 56, opacity: 0, force3D: true });
   gsap.set(stores, { opacity: 0, y: 18, force3D: true });
 
-  gsap
-    .timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 78%',
-        once: true,
-      },
-    })
-    .to(device, {
-      y: 0,
-      opacity: 1,
-      duration: 0.95,
-      ease: 'power3.out',
-    })
-    .to(
-      triad,
-      {
-        x: 0,
-        opacity: 1,
-        duration: 0.72,
-        stagger: 0.12,
-        ease: 'power3.out',
-      },
-      '-=0.58'
-    )
-    .to(
-      stores,
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-      },
-      '-=0.38'
-    );
+  const allAnimated = [device, ...Array.from(triad), stores];
+
+  const playShowcase = () => {
+    if (section.dataset.showcasePlayed === 'true') return;
+    section.dataset.showcasePlayed = 'true';
+    gsap
+      .timeline({
+        onComplete: () => {
+          gsap.set(allAnimated, { clearProps: 'willChange' });
+        },
+      })
+      .to(device, { y: 0, opacity: 1, duration: 0.95, ease: 'power3.out' })
+      .to(triad, { x: 0, opacity: 1, duration: 0.72, stagger: 0.12, ease: 'power3.out' }, '-=0.58')
+      .to(stores, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' }, '-=0.38');
+  };
+
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top 78%',
+    once: true,
+    onEnter: playShowcase,
+  });
+
+  // Fallback: if section is already in view when this runs (deferred init), play immediately.
+  const checkVisible = () => {
+    if (section.dataset.showcasePlayed === 'true') return;
+    const rect = section.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) playShowcase();
+  };
+  requestAnimationFrame(() => {
+    checkVisible();
+    requestAnimationFrame(checkVisible);
+  });
+  window.addEventListener('load', checkVisible, { once: true });
 }
 
 /** /audit — single-page intake + Cal iframe (portal reveal + loader + local session sync). */
@@ -1549,33 +1557,42 @@ function bindLenisToScrollTrigger() {
 }
 
 function initAll() {
+  // ── Critical path — must be ready before first scroll / paint ─────────────
   initLenis();
   bindLenisToScrollTrigger();
   bindRefreshHandlers();
-  initSpitzerReveal();
-  initVentureCapabilitiesReveal();
-  initStudioManifesto();
-  initHeroMissionReveal();
-  initCityPulseFlip();
-  initCaseViewMagnetic();
-  initHeroRefraction();
-  initBentoGridHover();
-  initScrollBoundScaling();
-  initCasesHoverReveal();
-  initCasesScrollIntensity();
-  initMagneticButtons();
-  initGlassVaultFullscreen();
-  initEliteCursor();
-  initCityPulse();
-  initTechStack();
-  initCityPulseShowcase();
-  initAuditPortal();
+  initSpitzerReveal();       // hero headline
+  initHeroMissionReveal();   // hero subhead
+  initHeroRefraction();      // hero light beam (above fold)
 
-  // Ensure ScrollTrigger measurements are correct after images load.
-  // This prevents pinning offsets when images shift layout.
-  void waitForImagesLoaded().then(() => {
-    ScrollTrigger.refresh();
-  });
+  // ── Deferred — run when the browser is idle after first paint ─────────────
+  // This prevents GSAP setup from competing with Three.js WebGL init, which
+  // is the main cause of choppiness on load.
+  const deferred = () => {
+    initVentureCapabilitiesReveal();
+    initStudioManifesto();
+    initCityPulseFlip();
+    initCaseViewMagnetic();
+    initBentoGridHover();
+    initScrollBoundScaling();
+    initCasesHoverReveal();
+    initCasesScrollIntensity();
+    initMagneticButtons();
+    initCityPulse();
+    initTechStack();
+    initCityPulseShowcase();
+    initAuditPortal();
+
+    void waitForImagesLoaded().then(() => {
+      ScrollTrigger.refresh();
+    });
+  };
+
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(deferred, { timeout: 1200 });
+  } else {
+    setTimeout(deferred, 200);
+  }
 }
 
 if (typeof window !== 'undefined') {

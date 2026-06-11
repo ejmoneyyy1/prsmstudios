@@ -62,18 +62,11 @@ body {
   touch-action: pan-y;
   font-family: 'Inter', sans-serif;
   background-image:
-    radial-gradient(
-      900px circle at 15% -10%,
-      rgba(59, 130, 246, 0.06),
-      transparent 55%
-    ),
-    radial-gradient(
-      700px circle at 85% 15%,
-      rgba(0, 210, 255, 0.04),
-      transparent 52%
-    ),
-    radial-gradient(600px circle at 40% 100%, rgba(46, 107, 255, 0.04), transparent 55%),
-    linear-gradient(180deg, rgba(252, 252, 252, 0.98) 0%, #fafafa 45%, #fafafa 100%);
+    radial-gradient(1100px circle at -5% 20%,  rgba(34, 211, 238, 0.10), transparent 60%),
+    radial-gradient(900px  circle at 105% 15%,  rgba(217, 70, 239, 0.07), transparent 55%),
+    radial-gradient(700px  circle at 10%  90%,  rgba(168, 85, 247, 0.07), transparent 55%),
+    radial-gradient(600px  circle at 95%  80%,  rgba(251, 191, 36, 0.06), transparent 55%),
+    linear-gradient(180deg, rgba(250,250,250,0.95) 0%, #fafafa 40%, #fafafa 100%);
   background-attachment: fixed;
   transform-style: preserve-3d;
 }
@@ -141,6 +134,19 @@ html[data-browser='safari'] [data-smooth-wrapper] {
   will-change: backdrop-filter, transform;
 }
 
+/* City Pulse legal — protocol documents (privacy / terms) */
+.glass-vault {
+  background: rgba(24, 24, 27, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.25),
+    0 24px 80px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  isolation: isolate;
+  -webkit-font-smoothing: antialiased;
+}
+
 .prism-preview-card {
   background: rgba(255, 255, 255, 0.7);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.02), 0 30px 60px rgba(0, 0, 0, 0.04);
@@ -187,51 +193,6 @@ html[data-browser='safari'] [data-smooth-wrapper] {
   -webkit-backdrop-filter: blur(32px) saturate(120%);
 }
 
-/* Elite soft cursor (GSAP lerp) */
-html.prsm-elite-cursor-root {
-  cursor: none;
-}
-
-html.prsm-elite-cursor-root a,
-html.prsm-elite-cursor-root button,
-html.prsm-elite-cursor-root [role='button'] {
-  cursor: none;
-}
-
-.prsm-elite-cursor {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 32px;
-  height: 32px;
-  margin: 0;
-  border-radius: 9999px;
-  pointer-events: none;
-  z-index: 10002;
-  opacity: 0;
-  will-change: transform;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html.prsm-elite-cursor-root {
-    cursor: auto;
-  }
-
-  html.prsm-elite-cursor-root a,
-  html.prsm-elite-cursor-root button,
-  html.prsm-elite-cursor-root [role='button'] {
-    cursor: pointer;
-  }
-
-  .prsm-elite-cursor {
-    display: none !important;
-  }
-}
 
 /* Global film grain: see Grain.astro (feTurbulence @ 3% opacity, fixed full-viewport) */
 
@@ -605,6 +566,96 @@ html[data-browser='safari'] a.core-services-cta {
 
   #smooth-content {
     min-height: min-content;
+  }
+}
+
+/*
+ * ─── MOBILE PERFORMANCE PASS ────────────────────────────────────────────────
+ * Remove GPU-heavy rendering paths on phones / tablets:
+ *  • Collapse hero 3D scene (no perspective / preserve-3d / translateZ depth)
+ *  • Strip persistent will-change hints (memory pressure on low-VRAM devices)
+ *  • Disable backdrop-filter on scrolling card stacks
+ *  • Contain scroll chaining with overscroll-behavior
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+@media (max-width: 1023px) {
+  /* Prevent rubber-band / pull-to-refresh chaining on the page body */
+  body {
+    overscroll-behavior: none;
+    transform-style: flat;
+    -webkit-transform-style: flat;
+  }
+
+  /* Hero: flatten the 3D perspective hub — no compositor 3D scene on mobile */
+  section[data-hero-section].hero-display-section,
+  section[data-hero-section].hero-perspective-hub {
+    perspective: none;
+    -webkit-perspective: none;
+    transform-style: flat;
+    -webkit-transform-style: flat;
+    will-change: auto;
+  }
+
+  /* FX pane: remove deep -Z translateZ so phone compositor doesn't create 3D layer */
+  .hero-prsm-fx-layer.hero-prsm-fx-pane-depth,
+  .hero-prsm-fx-pane-depth {
+    transform: none;
+    -webkit-transform: none;
+    will-change: auto;
+  }
+
+  /* Hero atmospheric pseudo-element depth */
+  section[data-hero-section].hero-display-section::before {
+    transform: none;
+    -webkit-transform: none;
+  }
+
+  /* Drop stacking context helpers that force composited layers */
+  .hero-newspaper-shell,
+  .hero-newspaper-grid {
+    transform-style: flat;
+    -webkit-transform-style: flat;
+  }
+
+  /* City Pulse showcase device — flatten 3D to translateZ → regular transform */
+  .venture-device-perspective {
+    perspective: none;
+    -webkit-perspective: none;
+  }
+
+  /* Venture capability cards — remove backdrop-filter (stacked over scrolling WebGL = frame drops) */
+  [data-venture-cap-card] {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: rgba(255, 255, 255, 0.75);
+    will-change: auto;
+  }
+
+  /* Segment cards — thin out the double-blur stack (section + card) */
+  #target-segments .segments-signal-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: rgba(255, 255, 255, 0.88);
+  }
+
+  /* Glass surfaces — skip will-change on low-VRAM devices */
+  .glass-surface {
+    will-change: auto;
+  }
+
+  /* City Pulse feature triad / device wrapper / store badges — remove persistent hints */
+  [data-city-feature],
+  [data-showcase-device],
+  [data-showcase-triad-item],
+  [data-showcase-stores],
+  .store-badge {
+    will-change: auto;
+  }
+
+  /* Smooth wrapper layer hints no longer needed without Lenis */
+  [data-smooth-wrapper] {
+    transform-style: flat;
+    -webkit-transform-style: flat;
   }
 }
 

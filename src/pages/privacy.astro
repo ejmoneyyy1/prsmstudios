@@ -1,0 +1,77 @@
+---
+import { ArrowRight } from 'lucide-astro';
+import Layout from '../layouts/Layout.astro';
+import { PRESENCE_AUDIT_HREF, SITE_NAME } from '../consts';
+
+const description =
+  'City Pulse privacy protocol — location, media, third-party processors, and data erasure (GDPR/CCPA) for PRSM Studio.';
+---
+
+<Layout title="Legal // PRSM" description={description} ogType="website">
+  <main class="relative z-10 min-h-screen">
+    <div
+      class="mx-auto max-w-4xl px-8 py-32 prose prose-zinc prose-invert !max-w-4xl prose-headings:font-semibold prose-headings:tracking-tight prose-p:leading-relaxed"
+    >
+      <article class="glass-vault rounded-2xl border border-white/10 px-6 py-10 md:px-10 md:py-12">
+        <header>
+          <p class="not-prose mb-2 font-mono text-[11px] tracking-[0.2em] text-zinc-500">City Pulse</p>
+          <h1 class="not-prose font-mono text-lg tracking-tight text-zinc-100 md:text-xl">
+            // PRIVACY_PROTOCOL_V1.0
+          </h1>
+        </header>
+
+        <div class="mt-10 space-y-10">
+          <section>
+            <h2 class="!mt-0 text-base text-zinc-100">01. PRECISE LOCATION</h2>
+            <p>
+              City Pulse collects precise location data to facilitate social discovery. This data is ephemeral, never
+              sold to third-party brokers, and is only processed to visualize local &apos;Pulse&apos; activity.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">02. CAMERA &amp; MEDIA</h2>
+            <p>
+              Camera access is strictly for content creation. We do not perform biometric face-mapping or harvest
+              metadata for advertising.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">03. THIRD-PARTY DATA</h2>
+            <p>
+              We utilize Firebase (Auth/Hosting) and Google Maps API. Your data is protected under their respective
+              security protocols.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">04. DATA ERASURE (GDPR/CCPA)</h2>
+            <p>
+              Users may trigger immediate account deletion via the in-app settings. Alternatively, contact{' '}
+              <a
+                href="mailto:legal@prsmstudios.io"
+                class="text-zinc-200 underline decoration-zinc-600 underline-offset-4 hover:text-white"
+                >legal@prsmstudios.io</a
+              >. All associated data will be purged from Firebase within 30 days.
+            </p>
+          </section>
+        </div>
+      </article>
+
+      <footer class="not-prose mt-16 flex flex-col items-center gap-4 pb-16 text-center">
+        <a
+          href={PRESENCE_AUDIT_HREF}
+          data-magnetic
+          class="presence-audit-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-zinc-700 bg-zinc-950/80 px-8 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-zinc-100 shadow-lg backdrop-blur-md transition-colors hover:border-zinc-600 hover:bg-zinc-900"
+        >
+          <span>Request a Presence Audit</span>
+          <ArrowRight class="h-4 w-4 shrink-0" aria-hidden="true" />
+        </a>
+        <p class="max-w-md text-xs text-zinc-500">
+          {SITE_NAME} — legal documentation for City Pulse.
+        </p>
+      </footer>
+    </div>
+  </main>
+</Layout>

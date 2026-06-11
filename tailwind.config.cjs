@@ -1,4 +1,5 @@
 const plugin = require('tailwindcss/plugin');
+const typography = require('@tailwindcss/typography');
 
 // Glassmorphism preset: centralized "glass" surfaces and shadows.
 const glassmorphism = {
@@ -66,6 +67,7 @@ module.exports = {
     },
   },
   plugins: [
+    typography,
     plugin(function ({ addUtilities }) {
       addUtilities(
         {

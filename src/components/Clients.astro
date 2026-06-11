@@ -1,0 +1,87 @@
+---
+const clients = [
+  {
+    name: 'Paidville',
+    url: 'https://paidville.com',
+    tag: 'Event Production & Brand Elevation',
+    description: 'Premium event production and brand consulting out of Fayetteville, AR. From intimate gatherings to large-scale productions — built on authentic cultural storytelling.',
+    accent: 'from-amber-500/20 to-orange-400/10',
+    dot: 'bg-amber-400',
+    border: 'hover:border-amber-400/30',
+  },
+  {
+    name: 'Earth Atelier',
+    url: 'https://earthatelier.com',
+    tag: 'Operational Clarity & Consulting',
+    description: 'Diagnoses and restructures complex operations where ownership, clarity, and flow break. Reveal. Shape. Deliver — from the inside out.',
+    accent: 'from-emerald-500/20 to-teal-400/10',
+    dot: 'bg-emerald-400',
+    border: 'hover:border-emerald-400/30',
+  },
+];
+---
+
+<section
+  data-clients
+  class="relative z-10 px-6 md:px-8 py-16 md:py-20"
+  aria-labelledby="clients-heading"
+>
+  <div class="mx-auto max-w-6xl">
+
+    <div class="flex items-center gap-4 mb-10">
+      <p
+        id="clients-heading"
+        class="font-mono text-[10px] font-semibold tracking-[0.35em] uppercase text-zinc-500"
+      >
+        Trusted by
+      </p>
+      <div class="flex-1 h-px bg-zinc-900/10"></div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {clients.map((client) => (
+        <a
+          href={client.url}
+          target="_blank"
+          rel="noreferrer noopener"
+          data-client-card
+          class={`group relative flex flex-col gap-4 rounded-2xl border border-zinc-900/10 bg-white/50 px-6 py-6 backdrop-blur-md transition-all duration-300 ${client.border} hover:bg-white/80 hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.1)] overflow-hidden`}
+        >
+          {/* Accent glow */}
+          <div class={`absolute inset-0 bg-gradient-to-br ${client.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+
+          {/* Top row — name + arrow */}
+          <div class="relative flex items-start justify-between gap-3">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class={`inline-block w-1.5 h-1.5 rounded-full ${client.dot}`} aria-hidden="true" />
+                <span class="font-mono text-[9px] font-semibold tracking-[0.3em] uppercase text-zinc-400">
+                  {client.tag}
+                </span>
+              </div>
+              <div class="text-xl font-black tracking-tight text-zinc-950">
+                {client.name}
+              </div>
+            </div>
+            <svg class="w-4 h-4 mt-1 shrink-0 text-zinc-300 group-hover:text-zinc-500 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 14 14" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2 12L12 2M12 2H6M12 2v6"/>
+            </svg>
+          </div>
+
+          {/* Description */}
+          <p class="relative text-sm leading-relaxed text-zinc-500 group-hover:text-zinc-600 transition-colors">
+            {client.description}
+          </p>
+
+          {/* URL chip */}
+          <div class="relative mt-auto pt-1">
+            <span class="text-[10px] font-semibold tracking-[0.2em] uppercase text-zinc-300 group-hover:text-zinc-400 transition-colors">
+              {client.url.replace('https://', '')}
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+
+  </div>
+</section>

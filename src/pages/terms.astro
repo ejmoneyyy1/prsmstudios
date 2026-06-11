@@ -1,0 +1,73 @@
+---
+import { ArrowRight } from 'lucide-astro';
+import Layout from '../layouts/Layout.astro';
+import { PRESENCE_AUDIT_HREF, SITE_NAME } from '../consts';
+
+const description =
+  'City Pulse terms of deployment — UGC safety, intellectual property, liability, and dispute resolution for PRSM Studio.';
+---
+
+<Layout title="Legal // PRSM" description={description} ogType="website">
+  <main class="relative z-10 min-h-screen">
+    <div
+      class="mx-auto max-w-4xl px-8 py-32 prose prose-zinc prose-invert !max-w-4xl prose-headings:font-semibold prose-headings:tracking-tight prose-p:leading-relaxed"
+    >
+      <article class="glass-vault rounded-2xl border border-white/10 px-6 py-10 md:px-10 md:py-12">
+        <header>
+          <p class="not-prose mb-2 font-mono text-[11px] tracking-[0.2em] text-zinc-500">City Pulse</p>
+          <h1 class="not-prose font-mono text-lg tracking-tight text-zinc-100 md:text-xl">
+            // TERMS_OF_DEPLOYMENT_V1.0
+          </h1>
+        </header>
+
+        <div class="mt-10 space-y-10">
+          <section>
+            <h2 class="!mt-0 text-base text-zinc-100">01. UGC SAFETY (APPLE GUIDELINE 1.2)</h2>
+            <p>
+              Users are prohibited from posting objectionable, defamatory, or illegal content. PRSM Studio enforces a
+              Zero-Tolerance policy. Reported content is reviewed and removed within 24 hours. Abusive users will be
+              subject to permanent hardware bans.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">02. INTELLECTUAL PROPERTY</h2>
+            <p>
+              You own your content. You grant PRSM Studio a limited license to display it within the app.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">03. INDEMNIFICATION &amp; LIABILITY</h2>
+            <p>
+              PRSM Studio provides geospatial visualization for discovery purposes. We are not liable for user
+              interactions or inaccuracies in third-party mapping data.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">04. DISPUTE RESOLUTION</h2>
+            <p>
+              All legal disputes shall be governed by the laws of [Your State/Country] and resolved through binding
+              arbitration.
+            </p>
+          </section>
+        </div>
+      </article>
+
+      <footer class="not-prose mt-16 flex flex-col items-center gap-4 pb-16 text-center">
+        <a
+          href={PRESENCE_AUDIT_HREF}
+          data-magnetic
+          class="presence-audit-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-zinc-700 bg-zinc-950/80 px-8 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-zinc-100 shadow-lg backdrop-blur-md transition-colors hover:border-zinc-600 hover:bg-zinc-900"
+        >
+          <span>Request a Presence Audit</span>
+          <ArrowRight class="h-4 w-4 shrink-0" aria-hidden="true" />
+        </a>
+        <p class="max-w-md text-xs text-zinc-500">
+          {SITE_NAME} — legal documentation for City Pulse.
+        </p>
+      </footer>
+    </div>
+  </main>
+</Layout>

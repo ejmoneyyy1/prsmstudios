@@ -2,6 +2,7 @@
 import { ArrowRight } from 'lucide-astro';
 import BaseHead from '../components/BaseHead.astro';
 import PrismBackground from '../components/PrismBackground.astro';
+import RefractionArt from '../components/RefractionArt.astro';
 import Grain from '../components/Grain.astro';
 import PrsmLogoMark from '../components/PrsmLogoMark.astro';
 import '../styles/global.css';
@@ -36,6 +37,8 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900&family=Inter:wght@400;500;600;700;800;900&display=swap"
       rel="stylesheet"
@@ -52,6 +55,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
   </head>
   <body>
     <PrismBackground />
+    <RefractionArt />
     <Grain />
     <header
       id="site-nav"

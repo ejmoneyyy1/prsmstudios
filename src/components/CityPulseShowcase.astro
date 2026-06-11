@@ -89,6 +89,7 @@ const features = [
                     muted
                     playsinline
                     loop
+                    preload="none"
                   />
                 ) : (
                   <img
@@ -97,7 +98,8 @@ const features = [
                     class="venture-iphone-fallback h-full w-full object-cover"
                     width="390"
                     height="844"
-                    loading="lazy"
+                    loading="eager"
+                    decoding="async"
                   />
                 )}
               </div>

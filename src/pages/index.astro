@@ -2,6 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import About from '../components/About.astro';
+import Clients from '../components/Clients.astro';
 import CityPulseShowcase from '../components/CityPulseShowcase.astro';
 import CoreServices from '../components/CoreServices.astro';
 import Segments from '../components/Segments.astro';
@@ -17,6 +18,7 @@ const missionCopy =
   <main class="relative z-10">
     <Hero />
     <About />
+    <Clients />
     <CityPulseShowcase />
     <CoreServices />
     <Segments />
@@ -87,7 +89,7 @@ const missionCopy =
 
           <div class="mt-10 text-sm text-[#0D0D0D]/60 flex flex-col md:flex-row gap-3 justify-between">
             <div>© {new Date().getFullYear()} {brandName}. All rights reserved.</div>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
               <a
                 class="hover:text-black transition-colors"
                 href="/brand-reframing"
@@ -100,6 +102,14 @@ const missionCopy =
                 href="/city-pulse"
               >
                 City Pulse
+              </a>
+              <span class="text-black/20">·</span>
+              <a class="hover:text-black transition-colors" href="/privacy">
+                Privacy
+              </a>
+              <span class="text-black/20">·</span>
+              <a class="hover:text-black transition-colors" href="/terms">
+                Terms
               </a>
             </div>
           </div>

@@ -3,7 +3,6 @@
  * Strategic SEO + social metadata for prsmstudios.io (high-intent digital transformation).
  */
 import {
-  GOOGLE_SITE_VERIFICATION,
   OG_IMAGE,
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -48,7 +47,7 @@ const imageUrl = new URL(ogImagePath, SITE_URL).href;
 <link rel="apple-touch-icon" href="/favicon.svg" />
 <meta name="theme-color" content="#16213e" />
 
-<meta name="google-site-verification" content={GOOGLE_SITE_VERIFICATION} />
+<!-- GSC verified via DNS — no HTML tag needed -->
 
 <meta property="og:site_name" content={SITE_NAME} />
 <meta property="og:type" content={ogType} />
@@ -63,3 +62,55 @@ const imageUrl = new URL(ogImagePath, SITE_URL).href;
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl} />
+
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}/#organization`,
+      "name": SITE_NAME,
+      "url": SITE_URL,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${SITE_URL}/favicon.svg`,
+        "contentUrl": `${SITE_URL}/favicon.svg`
+      },
+      "image": {
+        "@type": "ImageObject",
+        "url": imageUrl
+      },
+      "description": SITE_DESCRIPTION,
+      "email": "eaalobuia@gmail.com",
+      "sameAs": [
+        "https://www.linkedin.com/in/earl-alobuia-995318220/",
+        "https://www.instagram.com/ej.moneyyy/"
+      ],
+      "knowsAbout": [
+        "Brand Strategy",
+        "Digital Transformation",
+        "Venture Deployment",
+        "Experience Engineering",
+        "Web Development",
+        "Mobile App Development"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}/#website`,
+      "url": SITE_URL,
+      "name": SITE_NAME,
+      "description": SITE_DESCRIPTION,
+      "publisher": { "@id": `${SITE_URL}/#organization` }
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${pageUrl}#webpage`,
+      "url": pageUrl,
+      "name": title,
+      "description": description,
+      "isPartOf": { "@id": `${SITE_URL}/#website` },
+      "about": { "@id": `${SITE_URL}/#organization` }
+    }
+  ]
+})} />

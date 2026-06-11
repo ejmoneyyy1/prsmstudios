@@ -9,6 +9,11 @@ const isSafariBrowser =
   /Safari/i.test(navigator.userAgent) &&
   !/Chrome|Chromium|CriOS|Edg|OPR|Firefox|FxiOS/i.test(navigator.userAgent);
 
+/** True on touch / phone / tablet — skip heavy post-processing for smooth 60 fps. */
+const isMobileDevice =
+  window.matchMedia('(pointer: coarse)').matches ||
+  window.matchMedia('(max-width: 1024px)').matches;
+
 function initPrismBackground() {
   const mount = document.querySelector<HTMLElement>('[data-prism-bg]');
   const canvas = mount?.querySelector<HTMLCanvasElement>('[data-prism-canvas]');
@@ -18,13 +23,14 @@ function initPrismBackground() {
 
   const renderer = new THREE.WebGLRenderer({
     canvas,
-    antialias: true,
+    antialias: !isMobileDevice,
     alpha: true,
     premultipliedAlpha: false,
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Mobile: cap at 1× to avoid GPU overload; desktop: up to 2×.
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileDevice ? 1 : 2));
   renderer.setClearColor(0x000000, 0);
-  renderer.transmissionResolutionScale = 1;
+  renderer.transmissionResolutionScale = isMobileDevice ? 0.5 : 1;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -32,11 +38,15 @@ function initPrismBackground() {
   const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
   camera.position.set(0, 0, 6.5);
 
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const rgbPass = new ShaderPass(RGBShiftShader);
-  rgbPass.uniforms.amount.value = 0.0008;
-  composer.addPass(rgbPass);
+  // Mobile: render directly — skip the RGBShift post-processing pipeline entirely.
+  const useComposer = !isMobileDevice;
+  const composer = useComposer ? new EffectComposer(renderer) : null;
+  const rgbPass = useComposer ? new ShaderPass(RGBShiftShader) : null;
+  if (composer && rgbPass) {
+    composer.addPass(new RenderPass(scene, camera));
+    rgbPass.uniforms.amount.value = 0.0008;
+    composer.addPass(rgbPass);
+  }
 
   const prismGeo = new THREE.CylinderGeometry(1.05, 1.05, 2.4, 3, 1, false);
   prismGeo.rotateY(Math.PI / 2);
@@ -49,9 +59,9 @@ function initPrismBackground() {
     roughness: 0,
     metalness: 0,
     ior: 1.4,
-    // Dispersion adds chromatic aberration through transmission.
-    dispersion: 0.035,
-    clearcoat: 1,
+    // Dispersion adds chromatic aberration through transmission — skip on mobile (GPU cost).
+    dispersion: isMobileDevice ? 0 : 0.035,
+    clearcoat: isMobileDevice ? 0 : 1,
     clearcoatRoughness: 0,
     opacity: 0.95,
     transparent: true,
@@ -142,11 +152,20 @@ function initPrismBackground() {
 
   const io = new IntersectionObserver(
     ([entry]) => {
-      running = entry.isIntersecting;
+      running = entry.isIntersecting && document.visibilityState === 'visible';
     },
     { threshold: 0.01 }
   );
   io.observe(document.body);
+
+  // Pause the RAF loop when the tab is hidden — saves GPU/CPU on background tabs.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      running = false;
+    } else {
+      running = true;
+    }
+  });
 
   let signaled = false;
   const render = () => {
@@ -176,22 +195,24 @@ function initPrismBackground() {
       magenta.rotation.z = prism.rotation.y * 0.2;
       gold.rotation.z = prism.rotation.y * 0.12;
 
-      // Chromatic aberration response: tie RGB split + dispersion to motion.
-      const mouseMag = Math.hypot(pointer.x, pointer.y);
-      const aberrationTarget =
-        0.00045 +
-        rotMag * 0.00085 +
-        mouseMag * 0.001 +
-        scrollIntensity * 0.0012 +
-        speed * 0.00025;
-      const safariBoost = isSafariBrowser ? 1.2 : 1;
-
-      rgbPass.uniforms.amount.value +=
-        (aberrationTarget * safariBoost - rgbPass.uniforms.amount.value) * 0.12;
-      prismMat.dispersion = 0.02 + rotMag * 0.05 + scrollIntensity * 0.02;
+      if (useComposer && composer && rgbPass) {
+        // Chromatic aberration response: tie RGB split + dispersion to motion.
+        const mouseMag = Math.hypot(pointer.x, pointer.y);
+        const aberrationTarget =
+          0.00045 +
+          rotMag * 0.00085 +
+          mouseMag * 0.001 +
+          scrollIntensity * 0.0012 +
+          speed * 0.00025;
+        const safariBoost = isSafariBrowser ? 1.2 : 1;
+        rgbPass.uniforms.amount.value +=
+          (aberrationTarget * safariBoost - rgbPass.uniforms.amount.value) * 0.12;
+        prismMat.dispersion = 0.02 + rotMag * 0.05 + scrollIntensity * 0.02;
+        composer.render();
+      } else {
+        renderer.render(scene, camera);
+      }
       speed *= 0.88;
-
-      composer.render();
 
       if (!signaled) {
         signaled = true;
@@ -205,9 +226,9 @@ function initPrismBackground() {
   const onResize = () => {
     const w = window.innerWidth;
     const h = window.innerHeight;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileDevice ? 1 : 2));
     renderer.setSize(w, h);
-    composer.setSize(w, h);
+    if (composer) composer.setSize(w, h);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     window.dispatchEvent(new CustomEvent('prsm:prism-ready'));

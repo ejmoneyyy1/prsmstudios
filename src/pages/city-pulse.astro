@@ -3,16 +3,41 @@ import Layout from '../layouts/Layout.astro';
 import CaseDetail from '../components/CaseDetail.astro';
 import CityPulse from '../components/CityPulse.astro';
 import { getCaseById } from '../data/cases';
-import { SITE_NAME } from '../consts';
+import { SITE_NAME, SITE_URL } from '../consts';
 
 const caseData = getCaseById('city-pulse');
 
 if (!caseData) {
   throw new Error('Missing case data for city-pulse');
 }
+
+const pageUrl = `${SITE_URL}/city-pulse`;
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+        { "@type": "ListItem", "position": 2, "name": caseData.title, "item": pageUrl }
+      ]
+    },
+    {
+      "@type": "Article",
+      "@id": `${pageUrl}#article`,
+      "headline": caseData.title,
+      "description": caseData.summary,
+      "url": pageUrl,
+      "author": { "@id": `${SITE_URL}/#organization` },
+      "publisher": { "@id": `${SITE_URL}/#organization` },
+      "mainEntityOfPage": { "@id": `${pageUrl}#webpage` }
+    }
+  ]
+};
 ---
 
 <Layout title={`${caseData.title} | ${SITE_NAME}`} description={caseData.summary} ogType="article">
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
   <CaseDetail case={caseData}>
     <CityPulse />
   </CaseDetail>
