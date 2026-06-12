@@ -45,7 +45,7 @@ const clients = [
           target="_blank"
           rel="noreferrer noopener"
           data-client-card
-          class={`group relative flex flex-col gap-4 rounded-2xl border border-zinc-900/10 bg-white/50 px-6 py-6 backdrop-blur-md transition-all duration-300 ${client.border} hover:bg-white/80 hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.1)] overflow-hidden`}
+          class={`group relative flex flex-col gap-4 rounded-2xl border border-zinc-900/10 bg-white/60 px-6 py-6 transition-[border-color,background-color,box-shadow] duration-300 ${client.border} hover:bg-white/85 hover:shadow-[0_8px_32px_-8px_rgba(0,0,0,0.1)] overflow-hidden`}
         >
           {/* Accent glow */}
           <div class={`absolute inset-0 bg-gradient-to-br ${client.accent} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
@@ -63,7 +63,7 @@ const clients = [
                 {client.name}
               </div>
             </div>
-            <svg class="w-4 h-4 mt-1 shrink-0 text-zinc-300 group-hover:text-zinc-500 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 14 14" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <svg class="w-4 h-4 mt-1 shrink-0 text-zinc-300 group-hover:text-zinc-500 transition-[color,transform] duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" fill="none" viewBox="0 0 14 14" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2 12L12 2M12 2H6M12 2v6"/>
             </svg>
           </div>

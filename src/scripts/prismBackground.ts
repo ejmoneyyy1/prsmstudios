@@ -236,7 +236,7 @@ function initPrismBackground() {
   window.addEventListener('resize', onResize, { passive: true });
 
   window.addEventListener(
-    'beforeunload',
+    'pagehide',
     () => {
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('resize', onResize);

@@ -90,7 +90,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
         <a
           href={PRESENCE_AUDIT_HREF}
           data-magnetic
-          class="presence-audit-btn inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-black/20 bg-white/90 backdrop-blur-xl px-4 py-2.5 text-sm font-semibold text-black shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-all active:scale-[0.99] hover:bg-white"
+          class="presence-audit-btn inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-black/20 bg-white/90 backdrop-blur-xl px-4 py-2.5 text-sm font-semibold text-black shadow-[0_0_20px_rgba(0,0,0,0.1)] transition-[background-color,box-shadow,transform] active:scale-[0.99] hover:bg-white"
         >
           <span class="truncate">Request audit</span>
           <ArrowRight class="h-4 w-4 shrink-0" aria-hidden="true" />
@@ -135,7 +135,7 @@ const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
           <a
             href={PRESENCE_AUDIT_HREF}
             data-magnetic
-            class="presence-audit-btn pointer-events-auto inline-flex items-center gap-2 rounded-full border border-black/20 bg-white/85 backdrop-blur-xl px-5 py-2 text-black font-semibold shadow-[0_0_20px_rgba(0,0,0,0.12)] transition-all hover:bg-white"
+            class="presence-audit-btn pointer-events-auto inline-flex items-center gap-2 rounded-full border border-black/20 bg-white/85 backdrop-blur-xl px-5 py-2 text-black font-semibold shadow-[0_0_20px_rgba(0,0,0,0.12)] transition-[background-color,box-shadow] hover:bg-white"
           >
             <span>Request a Presence Audit</span>
             <ArrowRight class="h-4 w-4" aria-hidden="true" />
