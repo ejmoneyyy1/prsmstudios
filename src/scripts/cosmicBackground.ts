@@ -256,24 +256,26 @@ function initCosmicBackground() {
   timer.connect(document);
   let signaled = false;
 
-  // Throttle heavy transmission renders: only render on every frame when moving,
-  // drop to every 2nd frame when idle. This halves GPU cost during static views.
-  let frameCount = 0;
-  let idleFrames = 0;
+  // Hard 30fps cap: transmission + EffectComposer are expensive; 30fps looks
+  // smooth and leaves the browser headroom for clicks/scroll/new-tab opens.
+  // On interaction we also skip a couple frames to give the browser a clear
+  // frame budget (prevents visible stutter when opening new tabs, etc.).
+  const FRAME_MS = 1000 / 30;
+  let lastRenderTime = 0;
+  let pauseFrames = 0;
+
+  document.addEventListener('click', () => { pauseFrames = 3; }, { passive: true, capture: true });
+  document.addEventListener('touchstart', () => { pauseFrames = 2; }, { passive: true, capture: true });
 
   const render = () => {
     requestAnimationFrame(render);
     if (!running) return;
 
-    frameCount++;
-    const moving = speed > 0.02 || scrollIntensity > 0.05;
-    if (!moving) {
-      idleFrames++;
-      // Skip every other frame when idle (30fps effective)
-      if (idleFrames % 2 === 0) return;
-    } else {
-      idleFrames = 0;
-    }
+    if (pauseFrames > 0) { pauseFrames--; return; }
+
+    const now = performance.now();
+    if (now - lastRenderTime < FRAME_MS) return;
+    lastRenderTime = now;
 
     timer.update();
     const t = timer.getElapsed();
@@ -379,7 +381,9 @@ function initCosmicBackground() {
   }, { passive: true });
 
   // ── Cleanup ────────────────────────────────────────────────────────────────
-  window.addEventListener('beforeunload', () => {
+  // pagehide (not beforeunload) — beforeunload disables bfcache and delays every
+  // navigation; pagehide keeps instant back/forward while still cleaning up GPU.
+  window.addEventListener('pagehide', () => {
     prismGeo.dispose();
     prismMat.dispose();
     for (const g of shardGeos) g.dispose();

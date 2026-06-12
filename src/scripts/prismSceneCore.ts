@@ -271,7 +271,7 @@ function initPrismScenes() {
     requestAnimationFrame(tick);
 
     window.addEventListener(
-      'beforeunload',
+      'pagehide',
       () => {
         window.removeEventListener('mousemove', onMove);
         if (isVaultPreview) wrap.removeEventListener('pointermove', onGlintPointer);

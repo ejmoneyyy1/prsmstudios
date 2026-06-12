@@ -131,7 +131,8 @@ html[data-browser='safari'] [data-smooth-wrapper] {
 }
 
 .glass-surface {
-  will-change: backdrop-filter, transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 /* City Pulse legal — protocol documents (privacy / terms) */
