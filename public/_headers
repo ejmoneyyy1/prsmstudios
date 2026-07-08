@@ -1,3 +1,7 @@
+# AASA must be served as JSON — Apple's CDN rejects responses with wrong content-type.
+/.well-known/apple-app-site-association
+  Content-Type: application/json
+
 # Ensure crawlers receive XML, not a SPA/HTML fallback (Cloudflare Pages, Netlify, etc.)
 /sitemap-index.xml
   Content-Type: application/xml; charset=utf-8

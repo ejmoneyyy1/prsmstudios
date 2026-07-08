@@ -12,6 +12,7 @@
     "astro": "ASTRO_TELEMETRY_DISABLED=1 astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.6.13",
     "astro": "^5.18.0",
     "gsap": "^3.12.5",
     "lenis": "^1.1.19",

@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
@@ -8,6 +9,9 @@ export default defineConfig({
   site: 'https://prsmstudios.io',
   /** Aligns URLs with robots/sitemap (no trailing slash on paths). */
   trailingSlash: 'never',
+  // Cloudflare adapter enables on-demand SSR for individual pages (e.g. /pay/...)
+  // while the rest of the site stays fully prerendered (static).
+  adapter: cloudflare(),
   integrations: [
     tailwind(),
     // @astrojs/sitemap must stay LAST — it runs after routes are finalized.
@@ -19,7 +23,7 @@ export default defineConfig({
         'https://prsmstudios.io/privacy',
         'https://prsmstudios.io/terms',
         'https://prsmstudios.io/404',
-      ].includes(page),
+      ].includes(page) && !page.startsWith('https://prsmstudios.io/pay/'),
     }),
   ],
   vite: {
