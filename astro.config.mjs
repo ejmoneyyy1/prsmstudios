@@ -22,6 +22,7 @@ export default defineConfig({
         'https://prsmstudios.io/cloud-native-scale',
         'https://prsmstudios.io/privacy',
         'https://prsmstudios.io/terms',
+        'https://prsmstudios.io/support',
         'https://prsmstudios.io/404',
       ].includes(page) && !page.startsWith('https://prsmstudios.io/pay/'),
     }),

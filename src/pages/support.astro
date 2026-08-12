@@ -1,0 +1,80 @@
+---
+import { ArrowRight } from 'lucide-astro';
+import Layout from '../layouts/Layout.astro';
+import { PRESENCE_AUDIT_HREF, SITE_NAME, CONTACT_EMAIL } from '../consts';
+
+const description =
+  'Support for City Pulse by PRSM Studio — get help with the app, payments, and your account.';
+const supportSubject = encodeURIComponent('City Pulse — Support request');
+---
+
+<Layout title="Support // PRSM" description={description} ogType="website">
+  <main class="relative z-10 min-h-screen">
+    <div
+      class="mx-auto max-w-4xl px-8 py-32 prose prose-zinc prose-invert !max-w-4xl prose-headings:font-semibold prose-headings:tracking-tight prose-p:leading-relaxed"
+    >
+      <article class="glass-vault rounded-2xl border border-white/10 px-6 py-10 md:px-10 md:py-12">
+        <header>
+          <p class="not-prose mb-2 font-mono text-[11px] tracking-[0.2em] text-zinc-500">City Pulse</p>
+          <h1 class="not-prose font-mono text-lg tracking-tight text-zinc-100 md:text-xl">
+            // SUPPORT
+          </h1>
+        </header>
+
+        <div class="mt-10 space-y-10">
+          <section>
+            <h2 class="!mt-0 text-base text-zinc-100">Need help with Pulse?</h2>
+            <p>
+              Questions about the app, a payment, or your account? We're happy to help — reach us by
+              email and we'll get back to you as soon as we can.
+            </p>
+            <p class="not-prose mt-6">
+              <a
+                href={`mailto:${CONTACT_EMAIL}?subject=${supportSubject}`}
+                class="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-950/80 px-6 py-3 text-sm font-semibold tracking-[0.04em] text-zinc-100 no-underline transition-colors hover:border-zinc-600 hover:bg-zinc-900"
+              >
+                Email support
+                <ArrowRight class="h-4 w-4 shrink-0" aria-hidden="true" />
+              </a>
+            </p>
+            <p class="not-prose mt-4 font-mono text-xs tracking-[0.1em] text-zinc-500">
+              {CONTACT_EMAIL}
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">Payments</h2>
+            <p>
+              Payments are processed securely through Stripe. If a charge didn't go through or you need
+              a receipt, email us with the appointment details and we'll sort it out.
+            </p>
+          </section>
+
+          <section>
+            <h2 class="text-base text-zinc-100">Privacy &amp; terms</h2>
+            <p>
+              Review how we handle your data in our
+              <a href="/privacy" class="text-zinc-300 underline hover:text-zinc-100">Privacy Policy</a>
+              and the
+              <a href="/terms" class="text-zinc-300 underline hover:text-zinc-100">Terms</a>.
+            </p>
+          </section>
+        </div>
+      </article>
+
+      <footer class="not-prose mt-16 flex flex-col items-center gap-4 pb-16 text-center">
+        <a
+          href={PRESENCE_AUDIT_HREF}
+          data-magnetic
+          class="presence-audit-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full border border-zinc-700 bg-zinc-950/80 px-8 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-zinc-100 shadow-lg backdrop-blur-md transition-colors hover:border-zinc-600 hover:bg-zinc-900"
+        >
+          <span>Request a Presence Audit</span>
+          <ArrowRight class="h-4 w-4 shrink-0" aria-hidden="true" />
+        </a>
+        <p class="max-w-md text-xs text-zinc-500">
+          {SITE_NAME} — support for City Pulse.
+        </p>
+      </footer>
+    </div>
+  </main>
+</Layout>
